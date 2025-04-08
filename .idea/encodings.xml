@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-ai-service/qwen2.5_coder1.5b/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-ai-service/qwen2.5_coder1.5b/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-ai-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-ai-service/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-common/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-common/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/dihuan-online-judge-system-backend-gateway/src/main/java" charset="UTF-8" />

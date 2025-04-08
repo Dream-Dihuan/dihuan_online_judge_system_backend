@@ -1,6 +1,11 @@
 spring:
   application:
-    name: dihuan-user-service
+    name: dihuan-ai-service
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: qwen2.5-coder:1.5b
   cloud:
     sentinel:
       filter:
@@ -10,15 +15,10 @@ spring:
     nacos:
       discovery:
         server-addr: 127.0.0.1:8848
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dihuan_online_judge_system
-    username: root
-    password: thw20030806
 server:
-  port: 8085
+  port: 8084
   servlet:
-    context-path: /api/user
+    context-path: /api/ai
 #springdoc:
 #  default-flat-param-object: true
 springdoc:
