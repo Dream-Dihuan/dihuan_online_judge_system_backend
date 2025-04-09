@@ -2,6 +2,7 @@ package com.dihuan.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.dihuan.model.enums.question.JudgeStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -36,7 +37,7 @@ public class QuestionSubmit extends BaseEntity implements Serializable {
 
     @TableField(value = "judge_status")
     @Schema(description = "判题状态")
-    private String judgeStatus;
+    private JudgeStatusEnum judgeStatus;
 
     @TableField(value = "judge_result_info")
     @Schema(description = "判题结果信息")

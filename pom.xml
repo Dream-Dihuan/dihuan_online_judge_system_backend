@@ -16,6 +16,8 @@
         <module>dihuan-online-judge-system-backend-user-service</module>
         <module>dihuan-online-judge-system-backend-ai-service</module>
         <module>dihuan-online-judge-system-backend-ai-service</module>
+        <module>dihuan-online-judge-system-backend-question-service</module>
+        <module>dihuan-online-judge-system-backend-judge-service</module>
     </modules>
 
     <properties>
@@ -35,6 +37,7 @@
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <jackson-databind.version>2.15.4</jackson-databind.version>
         <spring-ai-ollama-spring-boot-starter.version>1.0.0-M6</spring-ai-ollama-spring-boot-starter.version>
+        <minio.version>8.5.3</minio.version>
     </properties>
 
 
@@ -153,6 +156,12 @@
                 <version>${spring-ai-ollama-spring-boot-starter.version}</version>
             </dependency>
 
+            <!-- MINIO -->
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>${minio.version}</version>
+            </dependency>
         </dependencies>
 
     </dependencyManagement>

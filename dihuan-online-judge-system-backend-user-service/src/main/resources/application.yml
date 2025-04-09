@@ -33,3 +33,10 @@ springdoc:
       paths-to-match: '/**'
 knife4j:
   enable: true
+
+minio:
+  endpoint: http://192.168.200.130:9000
+  access-key: thw20030806
+  secret-key: thw20030806
+  avatar-bucket-name: user-avatar
+  banner-bucket-name: user-banner

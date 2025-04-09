@@ -20,6 +20,10 @@ spring:
           uri: lb://dihuan-ai-service
           predicates:
             - Path=/api/ai/**
+        - id: dihuan-question-service
+          uri: lb://dihuan-question-service
+          predicates:
+            - Path=/api/question/**
 springdoc:
   default-flat-param-object: true
 knife4j:

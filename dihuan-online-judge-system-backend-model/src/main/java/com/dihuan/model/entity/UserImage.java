@@ -1,5 +1,6 @@
 package com.dihuan.model.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,7 +15,7 @@ import java.io.Serializable;
 @TableName(value = "user_image")
 @Data
 @Schema(description = "用户图片信息表")
-public class UserImage implements Serializable {
+public class UserImage extends BaseEntity implements Serializable {
 
     /**
      * 用户ID
@@ -26,14 +27,14 @@ public class UserImage implements Serializable {
     /**
      * 用户头像url
      */
-    @TableField(value = "avatar_url")
+    @TableField(value = "avatar_url",insertStrategy = FieldStrategy.ALWAYS,updateStrategy = FieldStrategy.ALWAYS)
     @Schema(description = "用户头像url")
     private String avatarUrl;
 
     /**
      * 用户banner图url
      */
-    @TableField(value = "banner_url")
+    @TableField(value = "banner_url",insertStrategy = FieldStrategy.ALWAYS,updateStrategy = FieldStrategy.ALWAYS)
     @Schema(description = "用户banner图url")
     private String bannerUrl;
 

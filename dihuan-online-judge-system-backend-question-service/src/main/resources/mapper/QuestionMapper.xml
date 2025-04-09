@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dihuan.question.mapper.QuestionMapper">
+    <select id="getQuestionList" resultType="com.dihuan.model.vo.question.QuestionVo">
+        SELECT
+        question.id,
+        COALESCE(question_submit.judge_status, 0) AS status,
+        question.title,
+        question.tags,
+        question.accepted_number,
+        question.submit_number,
+        CASE
+        WHEN question_collections.question_id IS NOT NULL THEN 1
+        ELSE 0
+        END AS collected
+        FROM question
+        LEFT JOIN (
+        -- 获取用户对每个题目的最新提交记录
+        SELECT
+        qs_inner.question_id,
+        qs_inner.user_id,
+        qs_inner.judge_status
+        FROM question_submit qs_inner
+        INNER JOIN (
+        SELECT
+        question_id,
+        MAX(id) AS max_id  -- 根据最大ID确定最新提交
+        FROM question_submit
+        WHERE user_id = #{userId}
+        GROUP BY question_id
+        ) qs_latest ON qs_inner.id = qs_latest.max_id
+        ) question_submit ON question.id = question_submit.question_id
+        LEFT JOIN question_collections
+        ON question.id = question_collections.question_id
+        AND question_collections.user_id = #{userId}
+        <where>
+            <!-- 基础查询条件 -->
+            <if test="title != null and title != ''">
+                AND question.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="tag != null and tag != ''">
+                AND question.tags LIKE CONCAT('%', #{tag}, '%')
+            </if>
+            <if test="id != null">
+                AND question.id = #{id}
+            </if>
+            <if test="authorId != null">
+                AND question.author_id = #{authorId}
+            </if>
+            <!-- 收藏过滤 -->
+            <if test="collected != null and collected">
+                AND question.id IN (
+                SELECT question_id
+                FROM question_collections
+                WHERE user_id = #{userId}
+                )
+            </if>
+        </where>
+        ORDER BY question.id DESC
+    </select>
+    <select id="getQuestionInfo" resultType="com.dihuan.model.vo.question.QuestionInfoVo">
+        select id,
+               title,
+               content,
+               tags,
+               judge_config,
+               author_id
+        from question
+        where id = #{id} and is_deleted = 0
+    </select>
+</mapper>

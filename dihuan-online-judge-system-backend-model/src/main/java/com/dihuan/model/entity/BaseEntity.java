@@ -8,13 +8,14 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
+@Data
 @Schema(description = "基础实体类")
 public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键")
     @TableId(value = "id",type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     @Schema(description = "创建时间")
     @TableField(value = "create_time",fill = FieldFill.INSERT)
@@ -31,4 +32,5 @@ public class BaseEntity implements Serializable {
     @JsonIgnore
     @TableLogic
     private byte isDeleted;
+
 }

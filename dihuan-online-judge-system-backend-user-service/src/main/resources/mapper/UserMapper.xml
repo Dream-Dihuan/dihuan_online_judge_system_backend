@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dihuan.user.mapper.UserMapper">
+    <select id="getUserInfo" resultType="com.dihuan.model.vo.user.UserInfoVo">
+        select user.id,
+               user.name,
+               user.gender,
+               user.description,
+               user.subscribe_number,
+               user.username,
+               user.password,
+               user.phone,
+               user.email,
+               user.experience,
+               user_image.avatar_url,
+               user_image.banner_url
+        from user
+                 left join user_image on user.id = user_image.user_id
+        where user.id = #{id}
+          and user.is_deleted = 0
+
+    </select>
+</mapper>

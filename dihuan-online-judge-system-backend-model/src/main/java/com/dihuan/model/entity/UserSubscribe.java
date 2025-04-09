@@ -15,7 +15,7 @@ import java.io.Serializable;
 @TableName(value = "user_subscribe")
 @Data
 @Schema(description = "关注用户记录表")
-public class UserSubscribe implements Serializable {
+public class UserSubscribe  extends BaseEntity  implements Serializable {
 
     /**
      * 用户关注用户记录ID

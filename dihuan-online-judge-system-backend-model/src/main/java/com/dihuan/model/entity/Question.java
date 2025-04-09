@@ -59,9 +59,9 @@ public class Question extends BaseEntity {
     /**
      * 题目提交数
      */
-    @TableField(value = "sumbit_number")
+    @TableField(value = "submit_number")
     @Schema(description = "题目提交数")
-    private Long sumbitNumber;
+    private Long submitNumber;
 
     /**
      * 作者用户ID
@@ -70,12 +70,6 @@ public class Question extends BaseEntity {
     @Schema(description = "作者用户ID")
     private Long authorId;
 
-    /**
-     * 用户收藏数
-     */
-    @TableField(value = "collection_number")
-    @Schema(description = "用户收藏数")
-    private Integer collectionNumber;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
