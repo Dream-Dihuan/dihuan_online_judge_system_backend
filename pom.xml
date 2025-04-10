@@ -15,7 +15,6 @@
         <module>dihuan-online-judge-system-backend-service-client</module>
         <module>dihuan-online-judge-system-backend-user-service</module>
         <module>dihuan-online-judge-system-backend-ai-service</module>
-        <module>dihuan-online-judge-system-backend-ai-service</module>
         <module>dihuan-online-judge-system-backend-question-service</module>
         <module>dihuan-online-judge-system-backend-judge-service</module>
     </modules>
@@ -38,6 +37,7 @@
         <jackson-databind.version>2.15.4</jackson-databind.version>
         <spring-ai-ollama-spring-boot-starter.version>1.0.0-M6</spring-ai-ollama-spring-boot-starter.version>
         <minio.version>8.5.3</minio.version>
+        <hutool-all.version>5.8.13</hutool-all.version>
     </properties>
 
 
@@ -161,6 +161,13 @@
                 <groupId>io.minio</groupId>
                 <artifactId>minio</artifactId>
                 <version>${minio.version}</version>
+            </dependency>
+
+            <!-- hutool 工具类 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool-all.version}</version>
             </dependency>
         </dependencies>
 

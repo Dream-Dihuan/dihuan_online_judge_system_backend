@@ -1,8 +1,11 @@
 package com.dihuan.model.vo.question;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.dihuan.model.entity.question.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Schema(description = "题目具体信息Vo")
@@ -21,7 +24,7 @@ public class QuestionInfoVo {
     private String tags;
 
     @Schema(description = "判题配置")
-    private String judgeConfig;
+    private List<JudgeConfig> judgeConfig;
 
     @Schema(description = "作者id")
     private Long authorId;

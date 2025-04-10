@@ -2,16 +2,20 @@ package com.dihuan.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.dihuan.model.entity.question.JudgeCaseResult;
 import com.dihuan.model.enums.question.JudgeStatusEnum;
+import com.dihuan.model.enums.question.QuestionResultEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 题目答案提交记录表
  */
-@TableName(value = "question_submit")
+@TableName(value = "question_submit", autoResultMap = true)
 @Data
 @Schema(description = "题目答案提交记录表")
 public class QuestionSubmit extends BaseEntity implements Serializable {
@@ -39,7 +43,11 @@ public class QuestionSubmit extends BaseEntity implements Serializable {
     @Schema(description = "判题状态")
     private JudgeStatusEnum judgeStatus;
 
-    @TableField(value = "judge_result_info")
+    @TableField(value = "question_result")
+    @Schema(description = "题目判题结果")
+    private QuestionResultEnum questionResult;
+
+    @TableField(value = "judge_result_info", typeHandler = JacksonTypeHandler.class)
     @Schema(description = "判题结果信息")
-    private String judgeResultInfo;
+    private List<JudgeCaseResult> judgeResultInfo;
 }

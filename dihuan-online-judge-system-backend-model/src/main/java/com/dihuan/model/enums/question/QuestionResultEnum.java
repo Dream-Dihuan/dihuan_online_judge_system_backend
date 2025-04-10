@@ -3,12 +3,11 @@ package com.dihuan.model.enums.question;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.dihuan.model.enums.BaseEnum;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AllArgsConstructor;
 
-public enum JudgeStatusEnum implements BaseEnum {
-    WAITING(0,"等待判题"),
-    JUDGING(1,"判题中"),
-    FINISHED(2,"判题完成");
+public enum QuestionResultEnum implements BaseEnum {
+    DEFAULT(0,"未尝试"),
+    PASSED(1,"通过"),
+    FAILED(2,"未通过");
 
 
     @EnumValue
@@ -17,7 +16,7 @@ public enum JudgeStatusEnum implements BaseEnum {
 
     private String name;
 
-    JudgeStatusEnum(Integer code, String name){
+    QuestionResultEnum(Integer code, String name){
         this.code = code;
         this.name = name;
     }

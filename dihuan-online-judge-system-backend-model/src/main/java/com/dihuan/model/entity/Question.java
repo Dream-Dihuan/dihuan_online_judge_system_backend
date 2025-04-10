@@ -2,14 +2,19 @@ package com.dihuan.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+import com.dihuan.model.entity.question.JudgeCase;
+import com.dihuan.model.entity.question.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 题目信息表
  * @TableName question
  */
-@TableName(value = "question")
+@TableName(value = "question", autoResultMap = true)
 @Data
 @Schema(description = "题目信息表")
 public class Question extends BaseEntity {
@@ -38,16 +43,16 @@ public class Question extends BaseEntity {
     /**
      * 判题检查点
      */
-    @TableField(value = "judge_case")
+    @TableField(value = "judge_case",typeHandler = JacksonTypeHandler.class)
     @Schema(description = "判题检查点")
-    private String judgeCase;
+    private List<JudgeCase> judgeCase;
 
     /**
      * 判题配置
      */
-    @TableField(value = "judge_config")
+    @TableField(value = "judge_config", typeHandler = JacksonTypeHandler.class)
     @Schema(description = "判题配置")
-    private String judgeConfig;
+    private List<JudgeConfig> judgeConfig;
 
     /**
      * 题目通过数

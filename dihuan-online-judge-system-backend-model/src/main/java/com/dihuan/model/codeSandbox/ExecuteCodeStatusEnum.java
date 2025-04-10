@@ -1,14 +1,14 @@
-package com.dihuan.model.enums.question;
+package com.dihuan.model.codeSandbox;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.dihuan.model.enums.BaseEnum;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AllArgsConstructor;
 
-public enum JudgeStatusEnum implements BaseEnum {
-    WAITING(0,"等待判题"),
-    JUDGING(1,"判题中"),
-    FINISHED(2,"判题完成");
+public enum ExecuteCodeStatusEnum implements BaseEnum {
+
+    SUCCESS(0,"成功执行"),
+    CODE_ERROR(1,"用户代码执行错误"),
+    SANDBOX_ERROR(2,"代码沙箱系统错误");
 
 
     @EnumValue
@@ -17,7 +17,7 @@ public enum JudgeStatusEnum implements BaseEnum {
 
     private String name;
 
-    JudgeStatusEnum(Integer code, String name){
+    ExecuteCodeStatusEnum(Integer code, String name){
         this.code = code;
         this.name = name;
     }

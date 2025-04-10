@@ -3,13 +3,16 @@ package com.dihuan.model.enums.question;
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import com.dihuan.model.enums.BaseEnum;
 import com.fasterxml.jackson.annotation.JsonValue;
-import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public enum JudgeStatusEnum implements BaseEnum {
-    WAITING(0,"等待判题"),
-    JUDGING(1,"判题中"),
-    FINISHED(2,"判题完成");
 
+public enum JudgeResultEnum implements BaseEnum {
+    ACCEPTED(0,"通过"),
+    WRONG_ANSWER(1,"答案错误"),
+    TIME_LIMIT_EXCEEDED(2,"超出时间限制"),
+    MEMORY_LIMIT_EXCEEDED(3,"超出内存限制"),
+    RUNTIME_ERROR(4,"运行时错误"),
+    SYSTEM_ERROR(5,"系统错误");
 
     @EnumValue
     @JsonValue
@@ -17,7 +20,7 @@ public enum JudgeStatusEnum implements BaseEnum {
 
     private String name;
 
-    JudgeStatusEnum(Integer code, String name){
+    JudgeResultEnum(Integer code, String name){
         this.code = code;
         this.name = name;
     }

@@ -33,6 +33,12 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
         return questionSubmitId;
     }
+
+    @Override
+    public QuestionSubmit getQuestionSubmitInfo(Long id) {
+        QuestionSubmit questionSubmit = this.getById(id);
+        return questionSubmit;
+    }
 }
 
 

@@ -5,8 +5,12 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.dihuan.model.entity.BaseEntity;
+import com.dihuan.model.entity.question.JudgeCase;
+import com.dihuan.model.entity.question.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+
+import java.util.List;
 
 /**
  * 题目信息Dto
@@ -29,8 +33,8 @@ public class AddOrUpdateQuestionInfoDto extends BaseEntity {
     private String tags;
 
     @Schema(description = "判题检查点")
-    private String judgeCase;
+    private List<JudgeCase> judgeCase;
 
     @Schema(description = "判题配置")
-    private String judgeConfig;
+    private List<JudgeConfig> judgeConfig;
 }

@@ -24,6 +24,10 @@ spring:
           uri: lb://dihuan-question-service
           predicates:
             - Path=/api/question/**
+        - id: dihuan-judge-service
+          uri: lb://dihuan-judge-service
+          predicates:
+            - Path=/api/judge/**
 springdoc:
   default-flat-param-object: true
 knife4j:

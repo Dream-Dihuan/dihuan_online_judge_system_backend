@@ -21,4 +21,6 @@ public interface QuestionService extends IService<Question> {
     DihuanPage<QuestionVo> getQuestionList(String title, String tag, Long id, Long authorId,Boolean collected, Integer page, Integer pageSize);
 
     QuestionInfoVo getQuestionInfo(Long id);
+
+    Question getOriginQuestionInfo(Long id);
 }

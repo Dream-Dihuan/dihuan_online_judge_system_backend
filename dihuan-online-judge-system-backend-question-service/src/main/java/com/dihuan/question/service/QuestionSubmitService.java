@@ -13,4 +13,6 @@ import com.dihuan.model.entity.QuestionSubmit;
 public interface QuestionSubmitService extends IService<QuestionSubmit> {
 
     Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto);
+
+    QuestionSubmit getQuestionSubmitInfo(Long id);
 }

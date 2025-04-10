@@ -55,6 +55,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         return questionInfoVo;
     }
 
+    @Override
+    public Question getOriginQuestionInfo(Long id) {
+        Question question = this.getById(id);
+        return question;
+    }
+
 
 }
 
