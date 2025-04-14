@@ -4,10 +4,7 @@ import java.util.concurrent.TimeUnit;
 
 public enum CaptchaTypeEnum {
 
-    ADMIN_LOGIN("admin:login:",60, TimeUnit.SECONDS),
-    ADMIN_RESET_PASSWORD("admin:resetPassword:",10,TimeUnit.MINUTES),
-    APP_LOGIN("app:login:",60,TimeUnit.SECONDS),
-    APP_RESET_PASSWORD("app:resetPassword:",10,TimeUnit.MINUTES);
+    LOGIN("app:login:",60,TimeUnit.SECONDS);
 
     private String captchaPrefix;
 

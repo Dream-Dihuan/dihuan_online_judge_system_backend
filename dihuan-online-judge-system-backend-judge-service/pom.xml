@@ -83,6 +83,13 @@
             <artifactId>hutool-all</artifactId>
         </dependency>
 
+        <!-- lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>com.dihuan</groupId>
             <artifactId>dihuan-online-judge-system-backend-service-client</artifactId>

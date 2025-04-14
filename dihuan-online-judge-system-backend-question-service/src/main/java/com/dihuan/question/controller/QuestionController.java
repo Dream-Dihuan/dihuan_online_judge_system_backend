@@ -24,11 +24,6 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    @RequestMapping("/ping")
-    public String ping() {
-        return "pong";
-    }
-
     @Operation(summary = "添加或修改题目信息")
     @PostMapping("AddOrUpdateQuestionInfo")
     public Result AddOrUpdateQuestionInfo(@RequestBody AddOrUpdateQuestionInfoDto addOrUpdateQuestionInfoDto) {
@@ -56,28 +51,11 @@ public class QuestionController {
         return Result.success(questionInfoVo);
     }
 
-    @GetMapping("test")
-    public Result test(){
-        Question question = new Question();
-        question.setTitle("ok");
-        question.setContent("ok");
-        question.setTags("['简单']");
-        question.setJudgeCase(new ArrayList<>(){
-            {
-                add(new JudgeCase("1 2","3"));
-            }
-        });
-        question.setJudgeConfig(new ArrayList<>(){
-            {
-                add(new JudgeConfig("java",1000L,1000L));
-            }
-        });
-        question.setAcceptedNumber(100L);
-        question.setSubmitNumber(100L);
-        question.setAuthorId(100L);
 
-        questionService.save(question);
+    @Operation(summary = "删除题目信息")
+    @DeleteMapping("deleteQuestionInfo/{id}")
+    public Result deleteQuestionInfo(@PathVariable Long id) {
+        questionService.removeById(id);
         return Result.success();
     }
-
 }

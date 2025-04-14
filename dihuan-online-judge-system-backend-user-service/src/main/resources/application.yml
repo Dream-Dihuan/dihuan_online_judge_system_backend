@@ -1,6 +1,26 @@
 spring:
   application:
     name: dihuan-user-service
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+  mail:
+    host: smtp.qq.com
+    port: 587
+    username: 449134710@qq.com
+    password: zmzywezflkvibicd
+    properties:
+      from: 449134710@qq.com
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          connectiontimeout: 5000
+          timeout: 5000
+          write-timeout: 5000
   cloud:
     sentinel:
       filter:

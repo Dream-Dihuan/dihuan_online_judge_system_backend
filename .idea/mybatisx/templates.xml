@@ -68,8 +68,8 @@
             <option name="tableUIInfoList">
               <list>
                 <TableUIInfo>
-                  <option name="className" value="QuestionSubmit" />
-                  <option name="tableName" value="question_submit" />
+                  <option name="className" value="UserSubscribe" />
+                  <option name="tableName" value="user_subscribe" />
                 </TableUIInfo>
               </list>
             </option>

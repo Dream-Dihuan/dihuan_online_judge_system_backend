@@ -4,6 +4,9 @@ package com.dihuan.question.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
+import com.dihuan.model.vo.question.QuestionNumberVo;
+
+import java.util.List;
 
 /**
 * @author 迪幻
@@ -15,4 +18,8 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
     Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto);
 
     QuestionSubmit getQuestionSubmitInfo(Long id);
+
+    List<QuestionNumberVo> getPassedQuestionNumberList();
+
+    List<QuestionNumberVo> getTryedQuestionNumberList();
 }

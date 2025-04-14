@@ -3,13 +3,18 @@ package com.dihuan.question.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dihuan.common.exception.DihuanException;
+import com.dihuan.common.localThread.TokenInfoHolder;
 import com.dihuan.common.result.ResultCodeEnum;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
+import com.dihuan.model.vo.question.QuestionNumberVo;
 import com.dihuan.question.mapper.QuestionSubmitMapper;
 import com.dihuan.question.service.QuestionSubmitService;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author 迪幻
@@ -19,6 +24,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
     implements QuestionSubmitService {
+
+    @Autowired
+    private QuestionSubmitMapper questionSubmitMapper;
 
     @Override
     public Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto) {
@@ -38,6 +46,20 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     public QuestionSubmit getQuestionSubmitInfo(Long id) {
         QuestionSubmit questionSubmit = this.getById(id);
         return questionSubmit;
+    }
+
+    @Override
+    public List<QuestionNumberVo> getPassedQuestionNumberList() {
+        Long userId = TokenInfoHolder.getTokenInfo().getId();
+        List<QuestionNumberVo> passedQuestionNumberList = questionSubmitMapper.getPassedQuestionNumberList(userId);
+        return passedQuestionNumberList;
+    }
+
+    @Override
+    public List<QuestionNumberVo> getTryedQuestionNumberList() {
+        Long userId = TokenInfoHolder.getTokenInfo().getId();
+        List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitMapper.getTryedQuestionNumberList(userId);
+        return tryedQuestionNumberList;
     }
 }
 

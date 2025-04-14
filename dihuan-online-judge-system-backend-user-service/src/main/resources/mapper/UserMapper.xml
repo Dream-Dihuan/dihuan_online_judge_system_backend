@@ -22,4 +22,33 @@
           and user.is_deleted = 0
 
     </select>
+    <select id="getUserList" resultType="com.dihuan.model.vo.user.UserListItemVo">
+
+        select user.id,
+               user.name,
+               user.gender,
+               user.subscribe_number,
+               user.username,
+               user.experience,
+               CASE
+                   WHEN user_subscribe.subscribed_id IS NOT NULL THEN TRUE
+                   ELSE FALSE
+                END AS subscribeStatus
+        from user
+            left join user_subscribe on user.id = user_subscribe.subscribed_id and user_subscribe.user_id = #{UserId}
+        <where>
+            <if test="name != null and name != ''">
+                and user.name LIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="username != null and username != ''">
+                and user.username = #{username}
+            </if>
+            <if test="id != null">
+                and user.id = #{id}
+            </if>
+                user.is_deleted = 0
+        </where>
+    </select>
+
+
 </mapper>

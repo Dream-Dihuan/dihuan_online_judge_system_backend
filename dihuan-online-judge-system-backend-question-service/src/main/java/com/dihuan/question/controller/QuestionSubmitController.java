@@ -3,11 +3,14 @@ package com.dihuan.question.controller;
 import com.dihuan.common.result.Result;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
+import com.dihuan.model.vo.question.QuestionNumberVo;
 import com.dihuan.question.service.QuestionSubmitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
@@ -29,5 +32,19 @@ public class QuestionSubmitController {
     public Result<QuestionSubmit> getQuestionSubmitInfo(@PathVariable Long id) {
         QuestionSubmit questionSubmitInfo = questionSubmitService.getQuestionSubmitInfo(id);
         return Result.success(questionSubmitInfo);
+    }
+
+    @GetMapping("getPassedQuestionNumberList")
+    @Operation(summary = "获取已通过题号列表")
+    public Result<List<QuestionNumberVo>> getPassedQuestionNumberList() {
+        List<QuestionNumberVo> passedQuestionNumberList = questionSubmitService.getPassedQuestionNumberList();
+        return Result.success(passedQuestionNumberList);
+    }
+
+    @GetMapping("getTryedQuestionNumberList")
+    @Operation(summary = "获取已尝试题号列表")
+    public Result<List<QuestionNumberVo>> getTryedQuestionNumberList() {
+        List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitService.getTryedQuestionNumberList();
+        return Result.success(tryedQuestionNumberList);
     }
 }
