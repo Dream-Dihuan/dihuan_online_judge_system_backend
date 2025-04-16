@@ -3,6 +3,8 @@ package com.dihuan.model.dto.user;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
 public class UpdateUserInfoDto {
 
@@ -15,6 +17,8 @@ public class UpdateUserInfoDto {
     @Schema(description = "用户签名")
     private String description;
 
+    @Schema(description = "生日")
+    private Date birthday;
 
     @Schema(description = "电话号码")
     private String phone;

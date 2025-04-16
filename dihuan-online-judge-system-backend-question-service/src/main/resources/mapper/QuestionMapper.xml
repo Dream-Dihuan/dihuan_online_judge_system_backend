@@ -6,7 +6,7 @@
     <select id="getQuestionList" resultType="com.dihuan.model.vo.question.QuestionVo">
         SELECT
         question.id,
-        COALESCE(question_submit.judge_status, 0) AS status,
+        COALESCE(question_submit.question_result, 0) AS status,
         question.title,
         question.tags,
         question.accepted_number,
@@ -21,7 +21,8 @@
         SELECT
         qs_inner.question_id,
         qs_inner.user_id,
-        qs_inner.judge_status
+#         qs_inner.judge_status
+        qs_inner.question_result
         FROM question_submit qs_inner
         INNER JOIN (
         SELECT
@@ -35,6 +36,7 @@
         LEFT JOIN question_collections
         ON question.id = question_collections.question_id
         AND question_collections.user_id = #{userId}
+        AND question_collections.is_deleted = 0
         <where>
             <!-- 基础查询条件 -->
             <if test="title != null and title != ''">
@@ -54,20 +56,36 @@
                 AND question.id IN (
                 SELECT question_id
                 FROM question_collections
-                WHERE user_id = #{userId}
+                WHERE user_id = #{userId} and question_collections.is_deleted = 0
                 )
             </if>
         </where>
-        ORDER BY question.id DESC
+        ORDER BY question.id ASC
     </select>
-    <select id="getQuestionInfo" resultType="com.dihuan.model.vo.question.QuestionInfoVo">
-        select id,
+
+    <resultMap id="questionInfoVoMap" type="com.dihuan.model.vo.question.QuestionInfoVo">
+        <id property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="tags" column="tags" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="judgeConfig" column="judge_config"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result property="authorId" column="author_id"/>
+    </resultMap>
+    <select id="getQuestionInfo" resultMap="questionInfoVoMap">
+
+            select question.id,
                title,
                content,
                tags,
-               judge_config,
-               author_id
+               judge_config ,
+               author_id,
+                CASE
+                WHEN question_collections.question_id IS NOT NULL THEN 1
+                ELSE 0
+                END AS collected
         from question
-        where id = #{id} and is_deleted = 0
+        left join question_collections on question.id = question_collections.question_id and question_collections.user_id = #{userId} and question_collections.is_deleted = 0
+        where question.id = #{id} and question.is_deleted = 0
     </select>
 </mapper>

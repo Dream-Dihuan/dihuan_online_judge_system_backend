@@ -17,7 +17,7 @@ public interface QuestionMapper extends BaseMapper<Question> {
 
     DihuanPage<QuestionVo> getQuestionList(String title,String tag,Long id,Long authorId,Long userId,Boolean collected,DihuanPage<QuestionVo> dihuanPage);
 
-    QuestionInfoVo getQuestionInfo(Long id);
+    QuestionInfoVo getQuestionInfo(Long id,Long userId);
 }
 
 

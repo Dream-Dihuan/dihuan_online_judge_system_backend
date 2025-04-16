@@ -15,9 +15,9 @@ import com.dihuan.model.vo.user.UserListItemVo;
 */
 public interface UserMapper extends BaseMapper<User> {
 
-    UserInfoVo getUserInfo(Long id);
+    UserInfoVo getUserInfo(Long id,Long userId);
 
-    DihuanPage<UserListItemVo> getUserList(String name, String username, Long id, Long searchType, Long userId, DihuanPage<UserListItemVo> userDihuanPage);
+    DihuanPage<UserListItemVo> getUserList(String name, String username, Long id, Boolean onlySubscribeUser, Long userId, DihuanPage<UserListItemVo> userDihuanPage);
 }
 
 

@@ -68,7 +68,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     private Mono<Void> loginAuthentication(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         ServerHttpRequest request = exchange.getRequest();
-        String token = request.getHeaders().getFirst("access_token");
+        String token = request.getHeaders().getFirst("dihuan_oj_system_token");
 
         // 判断token是否有效
         Claims claims = JwtUtils.parseToken(token);

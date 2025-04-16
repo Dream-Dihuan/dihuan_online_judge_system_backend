@@ -36,15 +36,15 @@ public class QuestionSubmitController {
 
     @GetMapping("getPassedQuestionNumberList")
     @Operation(summary = "获取已通过题号列表")
-    public Result<List<QuestionNumberVo>> getPassedQuestionNumberList() {
-        List<QuestionNumberVo> passedQuestionNumberList = questionSubmitService.getPassedQuestionNumberList();
+    public Result<List<QuestionNumberVo>> getPassedQuestionNumberList(@RequestParam Long userId) {
+        List<QuestionNumberVo> passedQuestionNumberList = questionSubmitService.getPassedQuestionNumberList(userId);
         return Result.success(passedQuestionNumberList);
     }
 
     @GetMapping("getTryedQuestionNumberList")
     @Operation(summary = "获取已尝试题号列表")
-    public Result<List<QuestionNumberVo>> getTryedQuestionNumberList() {
-        List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitService.getTryedQuestionNumberList();
+    public Result<List<QuestionNumberVo>> getTryedQuestionNumberList(@RequestParam Long userId) {
+        List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitService.getTryedQuestionNumberList(userId);
         return Result.success(tryedQuestionNumberList);
     }
 }

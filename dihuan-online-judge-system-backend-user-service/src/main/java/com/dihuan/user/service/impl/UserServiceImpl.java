@@ -15,10 +15,7 @@ import com.dihuan.common.utils.emailVerificationUtils.EmailConstantEnum;
 import com.dihuan.common.utils.emailVerificationUtils.EmailVerificationUtils;
 import com.dihuan.common.utils.jsonWebTokenUtils.JwtUtils;
 import com.dihuan.common.utils.jsonWebTokenUtils.TokenInfo;
-import com.dihuan.model.dto.user.ResetPasswordDto;
-import com.dihuan.model.dto.user.UpdateUserInfoDto;
-import com.dihuan.model.dto.user.UserLoginDto;
-import com.dihuan.model.dto.user.UserRegisterDto;
+import com.dihuan.model.dto.user.*;
 import com.dihuan.model.entity.User;
 import com.dihuan.model.vo.user.UserInfoVo;
 import com.dihuan.model.vo.user.UserListItemVo;
@@ -50,9 +47,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public UserInfoVo getUserInfo() {
-        Long id = TokenInfoHolder.getTokenInfo().getId();
-        UserInfoVo userInfoVo = userMapper.getUserInfo(id);
+    public UserInfoVo getUserInfo(Long id) {
+            Long userId = TokenInfoHolder.getTokenInfo().getId();
+        if(id==null){
+            id = TokenInfoHolder.getTokenInfo().getId();
+        }
+        UserInfoVo userInfoVo = userMapper.getUserInfo(id,userId);
         return userInfoVo;
     }
 
@@ -65,6 +65,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userInfo.setDescription(updateUserInfoDto.getDescription());
         userInfo.setPhone(updateUserInfoDto.getPhone());
         userInfo.setEmail(updateUserInfoDto.getEmail());
+        userInfo.setBirthday(updateUserInfoDto.getBirthday());
         boolean updated = this.updateById(userInfo);
         if(!updated){
             throw new DihuanException(ResultCodeEnum.FAIL,"用户信息更新失败");
@@ -72,10 +73,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public DihuanPage<UserListItemVo> getUserList(String name,String username, Long id, Long searchType, Long page, Long pageSize) {
+    public DihuanPage<UserListItemVo> getUserList(UserListDto userListDto) {
         Long userId = TokenInfoHolder.getTokenInfo().getId();
+        String name = userListDto.getName();
+        String username = userListDto.getUsername();
+        Long id = userListDto.getId();
+        Boolean onlySubscribeUser = userListDto.getOnlySubscribeUser();
+        Long page = userListDto.getPage();
+        Long pageSize = userListDto.getPageSize();
+
         DihuanPage<UserListItemVo> userDihuanPage = new DihuanPage<>(page, pageSize);
-        DihuanPage<UserListItemVo> userList = userMapper.getUserList(name,username, id, searchType,userId, userDihuanPage);
+        DihuanPage<UserListItemVo> userList = userMapper.getUserList(name,username, id, onlySubscribeUser,userId, userDihuanPage);
         return userList;
     }
 

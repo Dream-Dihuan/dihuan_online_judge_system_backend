@@ -10,10 +10,7 @@ import com.dihuan.common.utils.captchaUtils.CaptchaTypeEnum;
 import com.dihuan.common.utils.captchaUtils.CaptchaUtils;
 import com.dihuan.common.utils.captchaUtils.CaptchaVo;
 import com.dihuan.common.utils.jsonWebTokenUtils.TokenInfo;
-import com.dihuan.model.dto.user.ResetPasswordDto;
-import com.dihuan.model.dto.user.UpdateUserInfoDto;
-import com.dihuan.model.dto.user.UserLoginDto;
-import com.dihuan.model.dto.user.UserRegisterDto;
+import com.dihuan.model.dto.user.*;
 import com.dihuan.model.entity.User;
 import com.dihuan.model.vo.user.UserInfoVo;
 import com.dihuan.model.vo.user.UserListItemVo;
@@ -38,8 +35,8 @@ public class UserController {
     private StringRedisTemplate stringRedisTemplate;
 
     @Operation(summary = "获取验证码")
-    @GetMapping("getCaptcha")
-    public Result<CaptchaVo> getCaptcha(){
+    @GetMapping("getUserLoginCaptcha")
+    public Result<CaptchaVo> getUserLoginCaptcha(){
         return CaptchaUtils.createCaptcha(CaptchaTypeEnum.LOGIN, stringRedisTemplate);
     }
 
@@ -66,8 +63,8 @@ public class UserController {
 
     @Operation(summary = "获取用户信息")
     @GetMapping("getUserInfo")
-    public Result<UserInfoVo> getUserInfo(){
-        UserInfoVo userInfoVo = userService.getUserInfo();
+    public Result<UserInfoVo> getUserInfo(@RequestParam(required = false)Long id){
+        UserInfoVo userInfoVo = userService.getUserInfo(id);
         return Result.success(userInfoVo);
     }
     
@@ -79,14 +76,9 @@ public class UserController {
     }
 
     @Operation(summary = "获取用户信息列表")
-    @GetMapping("getUserList")
-    public Result<DihuanPage<UserListItemVo>> getUserList(@RequestParam(required = false)String name,
-                                                          @RequestParam(required = false)String username,
-                                                          @RequestParam(required = false)Long id,
-                                                          @RequestParam(required = true)Long searchType,
-                                                          @RequestParam(defaultValue = "1")Long page,
-                                                          @RequestParam(defaultValue = "20")Long pageSize){
-        DihuanPage<UserListItemVo> userList = userService.getUserList(name,username, id, searchType, page, pageSize);
+    @PostMapping("getUserList")
+    public Result<DihuanPage<UserListItemVo>> getUserList(@RequestBody UserListDto userListDto){
+        DihuanPage<UserListItemVo> userList = userService.getUserList(userListDto);
         return Result.success(userList);
     }
 }

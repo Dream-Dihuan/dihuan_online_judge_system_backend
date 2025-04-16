@@ -30,7 +30,7 @@ public class AddOrUpdateQuestionInfoDto extends BaseEntity {
     private String content;
 
     @Schema(description = "题目标签")
-    private String tags;
+    private String[] tags;
 
     @Schema(description = "判题检查点")
     private List<JudgeCase> judgeCase;

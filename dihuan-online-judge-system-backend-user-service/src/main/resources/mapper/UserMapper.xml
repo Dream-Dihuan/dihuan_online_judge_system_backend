@@ -12,12 +12,18 @@
                user.username,
                user.password,
                user.phone,
+               user.birthday,
                user.email,
                user.experience,
                user_image.avatar_url,
-               user_image.banner_url
+               user_image.banner_url,
+               CASE
+                   WHEN user_subscribe.subscribed_id IS NOT NULL THEN TRUE
+                   ELSE FALSE
+                   END AS subscribeStatus
         from user
                  left join user_image on user.id = user_image.user_id
+                 left join user_subscribe on user.id = user_subscribe.subscribed_id and user_subscribe.user_id = #{userId} and user_subscribe.is_deleted=0
         where user.id = #{id}
           and user.is_deleted = 0
 
@@ -35,7 +41,7 @@
                    ELSE FALSE
                 END AS subscribeStatus
         from user
-            left join user_subscribe on user.id = user_subscribe.subscribed_id and user_subscribe.user_id = #{UserId}
+            left join user_subscribe on user.id = user_subscribe.subscribed_id and user_subscribe.user_id = #{userId} and user_subscribe.is_deleted=0
         <where>
             <if test="name != null and name != ''">
                 and user.name LIKE CONCAT('%', #{name}, '%')
@@ -46,7 +52,10 @@
             <if test="id != null">
                 and user.id = #{id}
             </if>
-                user.is_deleted = 0
+            <if test="onlySubscribeUser == true">
+                and user.id in (select subscribed_id from user_subscribe where user_id = #{userId} and is_deleted = 0)
+            </if>
+            and user.is_deleted = 0
         </where>
     </select>
 

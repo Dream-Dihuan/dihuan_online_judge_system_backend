@@ -36,9 +36,9 @@ public class Question extends BaseEntity {
     /**
      * 题目标签
      */
-    @TableField(value = "tags")
+    @TableField(value = "tags", typeHandler = JacksonTypeHandler.class)
     @Schema(description = "题目标签")
-    private String tags;
+    private String[] tags;
 
     /**
      * 判题检查点

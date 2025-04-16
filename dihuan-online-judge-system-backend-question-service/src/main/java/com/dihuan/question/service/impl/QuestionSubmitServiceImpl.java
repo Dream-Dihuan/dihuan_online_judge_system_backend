@@ -49,15 +49,13 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     }
 
     @Override
-    public List<QuestionNumberVo> getPassedQuestionNumberList() {
-        Long userId = TokenInfoHolder.getTokenInfo().getId();
+    public List<QuestionNumberVo> getPassedQuestionNumberList(Long userId) {
         List<QuestionNumberVo> passedQuestionNumberList = questionSubmitMapper.getPassedQuestionNumberList(userId);
         return passedQuestionNumberList;
     }
 
     @Override
-    public List<QuestionNumberVo> getTryedQuestionNumberList() {
-        Long userId = TokenInfoHolder.getTokenInfo().getId();
+    public List<QuestionNumberVo> getTryedQuestionNumberList(Long userId) {
         List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitMapper.getTryedQuestionNumberList(userId);
         return tryedQuestionNumberList;
     }

@@ -1,6 +1,7 @@
 package com.dihuan.model.vo.question;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import com.dihuan.model.entity.question.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -21,12 +22,15 @@ public class QuestionInfoVo {
     private String content;
 
     @Schema(description = "题目标签")
-    private String tags;
+    private String[] tags;
 
     @Schema(description = "判题配置")
     private List<JudgeConfig> judgeConfig;
 
     @Schema(description = "作者id")
     private Long authorId;
+
+    @Schema(description = "是否收藏")
+    private Boolean collected;
 
 }

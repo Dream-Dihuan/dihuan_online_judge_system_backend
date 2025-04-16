@@ -2,10 +2,12 @@ package com.dihuan.model.vo.user;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.dihuan.model.entity.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Data
@@ -33,6 +35,10 @@ public class UserInfoVo extends BaseEntity implements Serializable{
     @Schema(description = "电话号码")
     private String phone;
 
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Schema(description = "生日")
+    private Date birthday;
+
     @Schema(description = "电子邮箱")
     private String email;
 
@@ -44,4 +50,7 @@ public class UserInfoVo extends BaseEntity implements Serializable{
 
     @Schema(description = "用户banner图url")
     private String bannerUrl;
+
+    @Schema(description = "是否关注该用户")
+    private Boolean subscribeStatus;
 }

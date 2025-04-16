@@ -51,7 +51,8 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Override
     public QuestionInfoVo getQuestionInfo(Long id) {
-        QuestionInfoVo questionInfoVo = questionMapper.getQuestionInfo(id);
+        Long userId = TokenInfoHolder.getTokenInfo().getId();
+        QuestionInfoVo questionInfoVo = questionMapper.getQuestionInfo(id,userId);
         return questionInfoVo;
     }
 

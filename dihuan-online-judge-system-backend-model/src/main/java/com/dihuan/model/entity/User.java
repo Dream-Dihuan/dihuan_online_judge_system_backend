@@ -2,10 +2,12 @@ package com.dihuan.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 用户信息表
@@ -45,6 +47,11 @@ public class User extends BaseEntity implements Serializable{
     @TableField(value = "phone")
     @Schema(description = "电话号码")
     private String phone;
+
+//    @JsonFormat(pattern = "yyyy-MM-dd")
+    @TableField(value = "birthday")
+    @Schema(description = "生日")
+    private Date birthday;
 
     @TableField(value = "email")
     @Schema(description = "电子邮箱")

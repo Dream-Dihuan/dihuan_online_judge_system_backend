@@ -17,7 +17,7 @@ public class RemoteCodeSandbox implements CodeSandbox {
         String url = "http://localhost:8090/executeCode";
         String json = JSONUtil.toJsonStr(executeCodeRequest);
         String responseStr = HttpUtil.createPost(url)
-                .header("access_token",null)
+                .header("dihuan_oj_system_token",null)
                 .body(json)
                 .execute()
                 .body();

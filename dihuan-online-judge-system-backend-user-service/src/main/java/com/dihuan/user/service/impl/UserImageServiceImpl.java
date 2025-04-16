@@ -158,7 +158,7 @@ public class UserImageServiceImpl extends ServiceImpl<UserImageMapper, UserImage
                 .build());
 
         // 清除原有的banner图
-        this.deleteUserAvatar();
+        this.deleteUserBanner();
 
         //返回 url 地址
         String bannerUrl = String.join("/", minioProperties.getEndpoint(), minioProperties.getBannerBucketName(), filename);

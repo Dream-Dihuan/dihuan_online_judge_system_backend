@@ -17,7 +17,7 @@ public class ModelTokenInfoInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         // 获取并解析token
-        String token = request.getHeader("access_token");
+        String token = request.getHeader("dihuan_oj_system_token");
 
         if(token!=null){
             Claims claims = JwtUtils.parseToken(token);

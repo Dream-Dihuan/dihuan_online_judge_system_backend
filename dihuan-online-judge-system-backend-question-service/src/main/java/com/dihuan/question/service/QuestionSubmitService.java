@@ -19,7 +19,7 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
 
     QuestionSubmit getQuestionSubmitInfo(Long id);
 
-    List<QuestionNumberVo> getPassedQuestionNumberList();
+    List<QuestionNumberVo> getPassedQuestionNumberList(Long userId);
 
-    List<QuestionNumberVo> getTryedQuestionNumberList();
+    List<QuestionNumberVo> getTryedQuestionNumberList(Long userId);
 }
