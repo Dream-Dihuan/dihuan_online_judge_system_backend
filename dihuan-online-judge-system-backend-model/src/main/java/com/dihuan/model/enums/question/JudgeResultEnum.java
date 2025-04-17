@@ -12,7 +12,7 @@ public enum JudgeResultEnum implements BaseEnum {
     TIME_LIMIT_EXCEEDED(2,"超出时间限制"),
     MEMORY_LIMIT_EXCEEDED(3,"超出内存限制"),
     RUNTIME_ERROR(4,"运行时错误"),
-    SYSTEM_ERROR(5,"系统错误");
+    CODE_COMPILE_ERROR(5,"代码编译错误");
 
     @EnumValue
     @JsonValue

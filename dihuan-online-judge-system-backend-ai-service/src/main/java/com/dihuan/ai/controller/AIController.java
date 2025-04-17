@@ -6,8 +6,10 @@ import com.dihuan.ai.config.AIContextGenerator;
 import com.dihuan.ai.model.AIContentItem;
 import com.dihuan.ai.model.ChatDto;
 import com.dihuan.ai.model.StreamResponse;
+import com.dihuan.serviceClient.service.QuestionFeignClient;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.ollama.api.OllamaOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,16 +26,13 @@ public class AIController {
     private ChatClient chatClient;
     private final ChatClient.Builder chatClientBuilder;
 
+    @Autowired
+    private QuestionFeignClient questionFeignClient;
 
-//    public DeepSeekController(ChatClient.Builder chatClient){
-//        this.chatClient=chatClient.build();
-//    }
+
     public AIController(ChatClient.Builder chatClient){
         this.chatClientBuilder = chatClient;
         this.chatClient=chatClient.build();
-//        OllamaOptions ollamaOptions = new OllamaOptions();
-//        ollamaOptions.setModel("deepseek-r1:8b");
-//        this.chatClient=chatClient.defaultOptions(ollamaOptions).build();
     }
 
     private void SetAIModel(String modelName){
@@ -45,7 +44,7 @@ public class AIController {
     @PostMapping("/chat")
     public String chat(@RequestBody ChatDto chatDto){
 
-        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto.getMessages());
+        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto,questionFeignClient);
         System.out.println(chatDto);
         SetAIModel(chatDto.getModelName());
         String result;
@@ -64,8 +63,7 @@ public class AIController {
      */
     @PostMapping(value = "/chat/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<StreamResponse> chatStream(@RequestBody ChatDto chatDto) {
-
-        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto.getMessages());
+        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto,questionFeignClient);
         System.out.println(chatDto);
         SetAIModel(chatDto.getModelName());
 

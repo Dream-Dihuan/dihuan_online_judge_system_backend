@@ -1,9 +1,12 @@
 package com.dihuan.question.controller;
 
+import com.dihuan.common.result.DihuanPage;
 import com.dihuan.common.result.Result;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionNumberVo;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
+import com.dihuan.model.vo.question.QuestionSubmitVo;
 import com.dihuan.question.service.QuestionSubmitService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,11 +30,11 @@ public class QuestionSubmitController {
         return Result.success(submitId);
     }
 
-    @GetMapping("getQuestionSubmitInfo/{id}")
+    @GetMapping("getQuestionSubmitInfo")
     @Operation(summary = "获取题目提交信息")
-    public Result<QuestionSubmit> getQuestionSubmitInfo(@PathVariable Long id) {
-        QuestionSubmit questionSubmitInfo = questionSubmitService.getQuestionSubmitInfo(id);
-        return Result.success(questionSubmitInfo);
+    public Result<QuestionSubmitVo> getQuestionSubmitInfo(@RequestParam Long id) {
+        QuestionSubmitVo questionSubmitInfoVo = questionSubmitService.getQuestionSubmitInfo(id);
+        return Result.success(questionSubmitInfoVo);
     }
 
     @GetMapping("getPassedQuestionNumberList")
@@ -46,5 +49,19 @@ public class QuestionSubmitController {
     public Result<List<QuestionNumberVo>> getTryedQuestionNumberList(@RequestParam Long userId) {
         List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitService.getTryedQuestionNumberList(userId);
         return Result.success(tryedQuestionNumberList);
+    }
+
+
+    @GetMapping("getQuestionSubmitList")
+    @Operation(summary = "获取提交记录列表")
+    public Result<DihuanPage<QuestionSubmitListItemVo>> getQuestionSubmitList(@RequestParam(required = false) Long userId,
+                                                                              @RequestParam(required = false) String title,
+                                                                              @RequestParam(required = false) Long questionId,
+                                                                              @RequestParam(required = false) String language,
+                                                                              @RequestParam(required = false) Long questionResult,
+                                                                              @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                                              @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+        DihuanPage<QuestionSubmitListItemVo> questionSubmitList = questionSubmitService.getQuestionSubmitList(userId,title, questionId, language, questionResult, page, pageSize);
+        return Result.success(questionSubmitList);
     }
 }

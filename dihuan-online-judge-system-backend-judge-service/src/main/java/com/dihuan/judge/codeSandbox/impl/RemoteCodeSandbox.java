@@ -14,9 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 public class RemoteCodeSandbox implements CodeSandbox {
 
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
-        String url = "http://localhost:8090/executeCode";
+        String url = "http://192.168.200.130:8101/codeSandbox/templateTest";
         String json = JSONUtil.toJsonStr(executeCodeRequest);
         String responseStr = HttpUtil.createPost(url)
+                .header("Content-Type", "application/json")
                 .header("dihuan_oj_system_token",null)
                 .body(json)
                 .execute()

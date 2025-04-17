@@ -1,6 +1,7 @@
 package com.dihuan.model.judgeStrategy;
 
 import com.dihuan.model.codeSandbox.ExecuteCodeInfo;
+import com.dihuan.model.codeSandbox.ExecuteCodeStatusEnum;
 import com.dihuan.model.entity.question.JudgeCase;
 import com.dihuan.model.entity.question.JudgeConfig;
 import lombok.AllArgsConstructor;
@@ -23,4 +24,6 @@ public class JudgeContext {
     private List<JudgeCase> judgeCaseList;
 
     private List<ExecuteCodeInfo> executeCodeInfo;
+
+    private ExecuteCodeStatusEnum executeCodeStatusEnum;
 }

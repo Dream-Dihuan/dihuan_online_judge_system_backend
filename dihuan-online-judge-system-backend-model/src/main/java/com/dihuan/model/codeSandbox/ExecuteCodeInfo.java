@@ -11,6 +11,11 @@ import lombok.Data;
 public class ExecuteCodeInfo {
 
     /**
+     * 程序执行状态
+     */
+    private Boolean success;
+
+    /**
      * 程序执行信息
      */
     private String output;

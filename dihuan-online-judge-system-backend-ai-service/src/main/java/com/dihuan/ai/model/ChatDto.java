@@ -9,4 +9,5 @@ import java.util.List;
 public class ChatDto implements Serializable {
     private List<AIContentItem> messages;
     private String modelName;
+    private Long questionId;
 }

@@ -9,9 +9,14 @@ public class InitRabbitMq {
     public static void doInit() {
         try {
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("localhost");
+            factory.setHost("192.168.200.130");
+            factory.setPort(5672);
+            factory.setUsername("thw20030806");
+            factory.setPassword("thw20030806");
+
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
+
             String EXCHANGE_NAME = "judge_exchange";
             channel.exchangeDeclare(EXCHANGE_NAME, "direct");
 
@@ -21,6 +26,7 @@ public class InitRabbitMq {
             channel.queueBind(queueName, EXCHANGE_NAME, "dihuan");
             System.out.println("消息队列启动成功");
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("消息队列启动失败");
         }
     }

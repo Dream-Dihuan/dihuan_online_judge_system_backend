@@ -8,6 +8,7 @@ import com.dihuan.model.entity.question.JudgeConfig;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -78,4 +79,14 @@ public class Question extends BaseEntity {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    @Override
+    public String toString() {
+        return "{" +
+                "title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", tags=" + Arrays.toString(tags) +
+                ", judgeConfig=" + judgeConfig +
+                '}';
+    }
 }

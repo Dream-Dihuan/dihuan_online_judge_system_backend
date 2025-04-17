@@ -4,11 +4,15 @@ package com.dihuan.question.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dihuan.common.exception.DihuanException;
 import com.dihuan.common.localThread.TokenInfoHolder;
+import com.dihuan.common.result.DihuanPage;
 import com.dihuan.common.result.ResultCodeEnum;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionNumberVo;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
+import com.dihuan.model.vo.question.QuestionSubmitVo;
 import com.dihuan.question.mapper.QuestionSubmitMapper;
+import com.dihuan.question.rabbitMq.QuestionSubmitProducer;
 import com.dihuan.question.service.QuestionSubmitService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,9 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     @Autowired
     private QuestionSubmitMapper questionSubmitMapper;
 
+    @Autowired
+    private QuestionSubmitProducer questionSubmitProducer;
+
     @Override
     public Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto) {
         QuestionSubmit questionSubmit = new QuestionSubmit();
@@ -39,13 +46,15 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
         Long questionSubmitId = questionSubmit.getId();
         System.out.println(questionSubmitId);
 
+        questionSubmitProducer.sendQuestionToJudgeService(questionSubmitId);
+
         return questionSubmitId;
     }
 
     @Override
-    public QuestionSubmit getQuestionSubmitInfo(Long id) {
-        QuestionSubmit questionSubmit = this.getById(id);
-        return questionSubmit;
+    public QuestionSubmitVo getQuestionSubmitInfo(Long id) {
+        QuestionSubmitVo questionSubmitVo = questionSubmitMapper.getQuestionSubmitInfo(id);
+        return questionSubmitVo;
     }
 
     @Override
@@ -58,6 +67,15 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
     public List<QuestionNumberVo> getTryedQuestionNumberList(Long userId) {
         List<QuestionNumberVo> tryedQuestionNumberList = questionSubmitMapper.getTryedQuestionNumberList(userId);
         return tryedQuestionNumberList;
+    }
+
+    @Override
+    public DihuanPage<QuestionSubmitListItemVo> getQuestionSubmitList(Long userId, String title, Long questionId, String language, Long questionResult, Integer page, Integer pageSize) {
+
+        DihuanPage<QuestionSubmitListItemVo> questionSubmitListItemVoDihuanPage = new DihuanPage<>(page, pageSize);
+
+        DihuanPage<QuestionSubmitListItemVo> questionSubmitList = questionSubmitMapper.getQuestionSubmitList(userId, title, questionId, language, questionResult, questionSubmitListItemVoDihuanPage);
+        return  questionSubmitList;
     }
 }
 

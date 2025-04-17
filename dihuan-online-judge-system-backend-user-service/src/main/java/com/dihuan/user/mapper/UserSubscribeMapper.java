@@ -3,6 +3,7 @@ package com.dihuan.user.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.dihuan.model.entity.UserSubscribe;
+import org.apache.ibatis.annotations.Update;
 
 /**
 * @author 迪幻
@@ -11,7 +12,11 @@ import com.dihuan.model.entity.UserSubscribe;
 * @Entity generator.domain.UserSubscribe
 */
 public interface UserSubscribeMapper extends BaseMapper<UserSubscribe> {
+    @Update("UPDATE user SET subscribe_number = subscribe_number + 1 WHERE id = #{userId}")
+    int incrementSubscribeNumber(Long userId);
 
+    @Update("UPDATE user SET subscribe_number = IF(subscribe_number > 0, subscribe_number - 1, 0) WHERE id = #{userId}")
+    int decrementSubscribeNumber(Long userId);
 }
 
 

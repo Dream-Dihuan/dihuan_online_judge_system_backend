@@ -42,10 +42,10 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public DihuanPage<QuestionVo> getQuestionList(String title, String tag, Long id, Long authorId,Boolean collected, Integer page, Integer pageSize) {
+    public DihuanPage<QuestionVo> getQuestionList(String title, String tag, Long id, Long authorId,Boolean collected,Boolean subscribeUser, Integer page, Integer pageSize) {
         Long userId = TokenInfoHolder.getTokenInfo().getId();
         DihuanPage<QuestionVo> dihuanPage = new DihuanPage<QuestionVo>(page,pageSize);
-        DihuanPage<QuestionVo> result =questionMapper.getQuestionList(title,tag,id,authorId,userId,collected,dihuanPage);
+        DihuanPage<QuestionVo> result =questionMapper.getQuestionList(title,tag,id,authorId,userId,collected,subscribeUser,dihuanPage);
         return result;
     }
 

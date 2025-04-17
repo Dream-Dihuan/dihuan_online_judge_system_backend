@@ -1,7 +1,10 @@
 package com.dihuan.judge.controller;
 
+import com.dihuan.common.result.Result;
+import com.dihuan.judge.config.WebSocket;
 import com.dihuan.judge.service.JudgeService;
 import com.dihuan.model.entity.QuestionSubmit;
+import com.dihuan.model.vo.question.QuestionSubmitVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +21,20 @@ public class JudgeController {
     @Autowired
     private JudgeService judgeService;
 
+
+
     @GetMapping("doJudge")
     @Operation(summary = "判题")
-    public QuestionSubmit questionSubmit(@RequestParam("questionSubmitId") Long questionSubmitId){
-        QuestionSubmit questionSubmit = judgeService.doJudge(questionSubmitId);
-        return questionSubmit;
+    public QuestionSubmitVo doJudge(@RequestParam("questionSubmitId") Long questionSubmitId){
+        QuestionSubmitVo questionSubmitVo = judgeService.doJudge(questionSubmitId);
+        WebSocket.sendMessage(questionSubmitId);
+        return questionSubmitVo;
+    }
+
+    @GetMapping("testWebSocket")
+    @Operation(summary = "WebSocket测试")
+    private Result testWebSocket(Long questionSubmitId){
+        WebSocket.sendMessage(questionSubmitId);
+        return Result.success();
     }
 }

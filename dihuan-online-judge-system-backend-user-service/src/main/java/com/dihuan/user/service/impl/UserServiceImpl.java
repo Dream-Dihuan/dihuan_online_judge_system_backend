@@ -21,6 +21,7 @@ import com.dihuan.model.vo.user.UserInfoVo;
 import com.dihuan.model.vo.user.UserListItemVo;
 import com.dihuan.user.mapper.UserMapper;
 import com.dihuan.user.service.UserService;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -144,6 +145,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new DihuanException(ResultCodeEnum.USER_RESET_PASSWORD_ERROR);
         }
     }
+
+
 
 }
 

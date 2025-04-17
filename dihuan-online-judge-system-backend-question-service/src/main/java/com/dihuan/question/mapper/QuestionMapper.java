@@ -15,7 +15,7 @@ import com.dihuan.model.entity.Question;
 */
 public interface QuestionMapper extends BaseMapper<Question> {
 
-    DihuanPage<QuestionVo> getQuestionList(String title,String tag,Long id,Long authorId,Long userId,Boolean collected,DihuanPage<QuestionVo> dihuanPage);
+    DihuanPage<QuestionVo> getQuestionList(String title,String tag,Long id,Long authorId,Long userId,Boolean collected,Boolean subscribeUser,DihuanPage<QuestionVo> dihuanPage);
 
     QuestionInfoVo getQuestionInfo(Long id,Long userId);
 }

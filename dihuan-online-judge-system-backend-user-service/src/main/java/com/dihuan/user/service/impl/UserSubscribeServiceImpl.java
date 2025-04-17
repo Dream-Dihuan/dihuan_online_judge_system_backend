@@ -10,6 +10,8 @@ import com.dihuan.common.utils.jsonWebTokenUtils.TokenInfo;
 import com.dihuan.model.entity.UserSubscribe;
 import com.dihuan.user.mapper.UserSubscribeMapper;
 import com.dihuan.user.service.UserSubscribeService;
+import org.apache.ibatis.annotations.Update;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,6 +22,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserSubscribeServiceImpl extends ServiceImpl<UserSubscribeMapper, UserSubscribe>
     implements UserSubscribeService {
+
+    @Autowired
+    private UserSubscribeMapper userSubscribeMapper;
 
     @Override
     public void subscribe(Long targetUserId) {
@@ -39,6 +44,9 @@ public class UserSubscribeServiceImpl extends ServiceImpl<UserSubscribeMapper, U
         if(theAimRecord!=null){
             throw new DihuanException(ResultCodeEnum.USER_SUBSCRIBE_SAME_ERROR);
         }
+
+        // 增加被关注用户的关注数
+        userSubscribeMapper.incrementSubscribeNumber(targetUserId);
 
         UserSubscribe userSubscribe = new UserSubscribe();
         userSubscribe.setUserId(userId);
@@ -62,6 +70,9 @@ public class UserSubscribeServiceImpl extends ServiceImpl<UserSubscribeMapper, U
         if(subscribeRecord==null){
             throw new DihuanException(ResultCodeEnum.USER_UNSUBSCRIBE_ERROR);
         }
+
+        //减少被关注用户的关注数
+        userSubscribeMapper.decrementSubscribeNumber(targetUserId);
 
         boolean remove = this.remove(userSubscribeLambdaQueryWrapper);
         if(!remove){

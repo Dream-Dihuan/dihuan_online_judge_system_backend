@@ -1,6 +1,11 @@
 spring:
   application:
     name: dihuan-ai-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dihuan_online_judge_system
+    username: root
+    password: thw20030806
   ai:
     ollama:
       base-url: http://localhost:11434

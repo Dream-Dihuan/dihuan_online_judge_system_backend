@@ -2,9 +2,12 @@ package com.dihuan.question.service;
 
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.dihuan.common.result.DihuanPage;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionNumberVo;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
+import com.dihuan.model.vo.question.QuestionSubmitVo;
 
 import java.util.List;
 
@@ -17,9 +20,11 @@ public interface QuestionSubmitService extends IService<QuestionSubmit> {
 
     Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto);
 
-    QuestionSubmit getQuestionSubmitInfo(Long id);
+    QuestionSubmitVo getQuestionSubmitInfo(Long id);
 
     List<QuestionNumberVo> getPassedQuestionNumberList(Long userId);
 
     List<QuestionNumberVo> getTryedQuestionNumberList(Long userId);
+
+    DihuanPage<QuestionSubmitListItemVo> getQuestionSubmitList(Long userId, String title, Long questionId, String language, Long questionResult, Integer page, Integer pageSize);
 }

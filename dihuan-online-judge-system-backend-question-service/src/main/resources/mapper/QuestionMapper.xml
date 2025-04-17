@@ -4,9 +4,86 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.dihuan.question.mapper.QuestionMapper">
     <select id="getQuestionList" resultType="com.dihuan.model.vo.question.QuestionVo">
+<!--        SELECT-->
+<!--        question.id,-->
+<!--        COALESCE(question_submit.question_result, 0) AS status,-->
+<!--        question.title,-->
+<!--        question.tags,-->
+<!--        question.accepted_number,-->
+<!--        question.submit_number,-->
+<!--        CASE-->
+<!--        WHEN question_collections.question_id IS NOT NULL THEN 1-->
+<!--        ELSE 0-->
+<!--        END AS collected-->
+<!--        FROM question-->
+<!--        LEFT JOIN (-->
+<!--        &#45;&#45; 获取用户对每个题目的最新提交记录-->
+<!--        SELECT-->
+<!--        qs_inner.question_id,-->
+<!--        qs_inner.user_id,-->
+<!--#         qs_inner.judge_status-->
+<!--        qs_inner.question_result-->
+<!--        FROM question_submit qs_inner-->
+<!--        INNER JOIN (-->
+<!--        SELECT-->
+<!--        question_id,-->
+<!--        MAX(id) AS max_id  &#45;&#45; 根据最大ID确定最新提交-->
+<!--        FROM question_submit-->
+<!--        WHERE user_id = #{userId}-->
+<!--        GROUP BY question_id-->
+<!--        ) qs_latest ON qs_inner.id = qs_latest.max_id-->
+<!--        ) question_submit ON question.id = question_submit.question_id-->
+<!--        LEFT JOIN question_collections-->
+<!--        ON question.id = question_collections.question_id-->
+<!--        AND question_collections.user_id = #{userId}-->
+<!--        AND question_collections.is_deleted = 0-->
+<!--        <where>-->
+<!--            &lt;!&ndash; 基础查询条件 &ndash;&gt;-->
+<!--            <if test="title != null and title != ''">-->
+<!--                AND question.title LIKE CONCAT('%', #{title}, '%')-->
+<!--            </if>-->
+<!--            <if test="tag != null and tag != ''">-->
+<!--                AND question.tags LIKE CONCAT('%', #{tag}, '%')-->
+<!--            </if>-->
+<!--            <if test="id != null">-->
+<!--                AND question.id = #{id}-->
+<!--            </if>-->
+<!--            <if test="authorId != null">-->
+<!--                AND question.author_id = #{authorId}-->
+<!--            </if>-->
+<!--            &lt;!&ndash; 收藏过滤 &ndash;&gt;-->
+<!--            <if test="collected != null and collected">-->
+<!--                AND question.id IN (-->
+<!--                SELECT question_id-->
+<!--                FROM question_collections-->
+<!--                WHERE user_id = #{userId} and question_collections.is_deleted = 0-->
+<!--                )-->
+<!--            </if>-->
+<!--            <if test="subscribeUser != null and subscribeUser">-->
+<!--                AND question.author_id in (select user_subscribe.subscribed_id from user_subscribe where user_subscribe.is_deleted = 0 and user_subscribe.user_id = #{userId})-->
+<!--            </if>-->
+<!--            AND question.is_deleted =0-->
+<!--        </where>-->
+<!--        ORDER BY question.id ASC-->
         SELECT
         question.id,
-        COALESCE(question_submit.question_result, 0) AS status,
+        CASE
+        WHEN EXISTS (
+        SELECT 1 FROM question_submit
+        WHERE question_id = question.id
+        AND user_id = #{userId}
+        AND question_result = 1
+        AND is_deleted = 0
+        ) THEN 1
+        WHEN EXISTS (
+        SELECT 1 FROM question_submit
+        WHERE question_id = question.id
+        AND user_id = #{userId}
+        AND question_result = 2
+        AND is_deleted = 0
+        ) THEN 2
+        ELSE 0
+        END AS status,
         question.title,
         question.tags,
         question.accepted_number,
@@ -16,29 +93,12 @@
         ELSE 0
         END AS collected
         FROM question
-        LEFT JOIN (
-        -- 获取用户对每个题目的最新提交记录
-        SELECT
-        qs_inner.question_id,
-        qs_inner.user_id,
-#         qs_inner.judge_status
-        qs_inner.question_result
-        FROM question_submit qs_inner
-        INNER JOIN (
-        SELECT
-        question_id,
-        MAX(id) AS max_id  -- 根据最大ID确定最新提交
-        FROM question_submit
-        WHERE user_id = #{userId}
-        GROUP BY question_id
-        ) qs_latest ON qs_inner.id = qs_latest.max_id
-        ) question_submit ON question.id = question_submit.question_id
         LEFT JOIN question_collections
         ON question.id = question_collections.question_id
         AND question_collections.user_id = #{userId}
         AND question_collections.is_deleted = 0
         <where>
-            <!-- 基础查询条件 -->
+            <!-- 基础查询条件保持不变 -->
             <if test="title != null and title != ''">
                 AND question.title LIKE CONCAT('%', #{title}, '%')
             </if>
@@ -59,9 +119,13 @@
                 WHERE user_id = #{userId} and question_collections.is_deleted = 0
                 )
             </if>
+            <if test="subscribeUser != null and subscribeUser">
+                AND question.author_id in (select user_subscribe.subscribed_id from user_subscribe where user_subscribe.is_deleted = 0 and user_subscribe.user_id = #{userId})
+            </if>
+            AND question.is_deleted = 0
         </where>
         ORDER BY question.id ASC
-    </select>
+</select>
 
     <resultMap id="questionInfoVoMap" type="com.dihuan.model.vo.question.QuestionInfoVo">
         <id property="id" column="id"/>

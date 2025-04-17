@@ -2,8 +2,11 @@ package com.dihuan.question.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.dihuan.common.result.DihuanPage;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionNumberVo;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
+import com.dihuan.model.vo.question.QuestionSubmitVo;
 
 import java.util.List;
 
@@ -18,6 +21,10 @@ public interface QuestionSubmitMapper extends BaseMapper<QuestionSubmit> {
     List<QuestionNumberVo> getPassedQuestionNumberList(Long userId);
 
     List<QuestionNumberVo> getTryedQuestionNumberList(Long userId);
+
+    QuestionSubmitVo getQuestionSubmitInfo(Long id);
+
+    DihuanPage<QuestionSubmitListItemVo> getQuestionSubmitList(Long userId, String title, Long questionId, String language, Long questionResult, DihuanPage<QuestionSubmitListItemVo> questionSubmitListItemVoDihuanPage);
 }
 
 

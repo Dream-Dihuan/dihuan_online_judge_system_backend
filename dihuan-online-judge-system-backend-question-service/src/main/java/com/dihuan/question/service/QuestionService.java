@@ -18,7 +18,7 @@ public interface QuestionService extends IService<Question> {
     void AddOrUpdateQuestionInfo(AddOrUpdateQuestionInfoDto addOrUpdateQuestionInfoDto);
 
 
-    DihuanPage<QuestionVo> getQuestionList(String title, String tag, Long id, Long authorId,Boolean collected, Integer page, Integer pageSize);
+    DihuanPage<QuestionVo> getQuestionList(String title, String tag, Long id, Long authorId,Boolean collected,Boolean subscribeUser, Integer page, Integer pageSize);
 
     QuestionInfoVo getQuestionInfo(Long id);
 

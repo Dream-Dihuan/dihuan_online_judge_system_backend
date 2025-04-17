@@ -38,23 +38,32 @@ public class QuestionController {
                                                           @RequestParam(required = false)Long id,
                                                           @RequestParam(required = false)Long authorId,
                                                           @RequestParam(required = false)Boolean collected,
+                                                          @RequestParam(required = false)Boolean subscribeUser,
                                                           @RequestParam(defaultValue = "1")Integer page,
                                                           @RequestParam(defaultValue = "20")Integer pageSize) {
-        DihuanPage<QuestionVo> pageResult =  questionService.getQuestionList(title,tag,id,authorId,collected,page,pageSize);
+        DihuanPage<QuestionVo> pageResult =  questionService.getQuestionList(title,tag,id,authorId,collected,subscribeUser,page,pageSize);
         return Result.success(pageResult);
     }
 
     @Operation(summary = "获取题目信息详情")
-    @GetMapping("getQuestionInfo/{id}")
-    public Result<QuestionInfoVo> getQuestionInfo(@PathVariable Long id) {
+    @GetMapping("getQuestionInfo")
+    public Result<QuestionInfoVo> getQuestionInfo(@RequestParam Long id) {
         QuestionInfoVo questionInfoVo = questionService.getQuestionInfo(id);
         return Result.success(questionInfoVo);
     }
 
+    @Operation(summary = "获取题目原始信息详情")
+    @GetMapping("getOriginQuestionInfo")
+    public Result<Question> getOriginQuestionInfo(@RequestParam Long id) {
+        Question questionInfo = questionService.getOriginQuestionInfo(id);
+        return Result.success(questionInfo);
+    }
+
+
 
     @Operation(summary = "删除题目信息")
-    @DeleteMapping("deleteQuestionInfo/{id}")
-    public Result deleteQuestionInfo(@PathVariable Long id) {
+    @DeleteMapping("deleteQuestionInfo")
+    public Result deleteQuestionInfo(@RequestParam Long id) {
         questionService.removeById(id);
         return Result.success();
     }

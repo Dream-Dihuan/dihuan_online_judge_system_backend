@@ -5,11 +5,11 @@
 <mapper namespace="com.dihuan.question.mapper.QuestionSubmitMapper">
 
     <select id="getPassedQuestionNumberList" resultType="com.dihuan.model.vo.question.QuestionNumberVo">
-        select
-            question_submit.question_id,
+        select distinct
+            question.id as question_id,
             question.title as question_title
         from question_submit
-                 left join question on question_submit.question_id = question.id
+                 inner join question on question_submit.question_id = question.id
         where question_submit.user_id = #{userId}
           and question_submit.judge_status = 2
           and question_submit.question_result = 1
@@ -17,17 +17,95 @@
           and question.is_deleted = 0
         order by question.id asc
     </select>
+
     <select id="getTryedQuestionNumberList" resultType="com.dihuan.model.vo.question.QuestionNumberVo">
-        select
-            question_submit.question_id,
+        select distinct
+            question.id as question_id,
             question.title as question_title
         from question_submit
-                 left join question on question_submit.question_id = question.id
+                 inner join question on question_submit.question_id = question.id
         where question_submit.user_id = #{userId}
           and question_submit.judge_status = 2
           and question_submit.question_result = 2
           and question_submit.is_deleted = 0
           and question.is_deleted = 0
+          and not exists (
+                select *
+                from question_submit
+                where question_submit.question_id = question.id
+                  and question_submit.user_id = #{userId}
+                  and question_submit.judge_status = 2
+                  and question_submit.question_result = 1
+                  and question_submit.is_deleted = 0
+            )
         order by question.id asc
     </select>
+
+    <resultMap id="questionSubmitVoMap" type="com.dihuan.model.vo.question.QuestionSubmitVo">
+        <id column="id" property="id"/>
+        <result column="question_id" property="questionId"/>
+        <result column="user_id" property="userId"/>
+        <result column="language" property="language"/>
+        <result column="code" property="code"/>
+        <result column="judge_status" property="judgeStatus"/>
+        <result column="question_result" property="questionResult"/>
+        <result column="judge_result_info" property="judgeResultInfo"
+                typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="getQuestionSubmitInfo" resultMap="questionSubmitVoMap">
+        SELECT
+            id,
+            question_id,
+            user_id,
+            language,
+            code,
+            judge_status,
+            question_result,
+            judge_result_info,
+            DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') as create_time
+        FROM question_submit
+        WHERE id = #{id}
+    </select>
+    <select id="getQuestionSubmitList" resultType="com.dihuan.model.vo.question.QuestionSubmitListItemVo">
+        SELECT
+        qs.id AS questionSubmitId,
+        q.id AS questionId,
+        q.title AS questionTitle,
+        u.name AS userName,
+        qs.language AS language,
+        qs.judge_status AS judgeStatus,
+        qs.question_result AS questionResult,
+        qs.create_time AS createTime
+        FROM
+        question_submit qs
+        JOIN
+        question q ON qs.question_id = q.id
+        JOIN
+        user u ON qs.user_id = u.id
+        WHERE
+        qs.is_deleted = 0
+        AND q.is_deleted = 0
+        AND u.is_deleted = 0
+        <if test="userId != null">
+            AND qs.user_id = #{userId}
+        </if>
+        <if test="title != null and title != ''">
+            AND q.title LIKE CONCAT('%', #{title}, '%')
+        </if>
+        <if test="questionId != null">
+            AND qs.question_id = #{questionId}
+        </if>
+        <if test="language != null and language != ''">
+            AND qs.language = #{language}
+        </if>
+        <if test="questionResult != null">
+            AND qs.question_result = #{questionResult}
+        </if>
+        ORDER BY
+        qs.create_time DESC
+
+    </select>
+
 </mapper>
