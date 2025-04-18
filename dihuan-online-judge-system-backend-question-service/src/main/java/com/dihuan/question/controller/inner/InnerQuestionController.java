@@ -5,6 +5,7 @@ import com.dihuan.model.entity.Question;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.enums.question.QuestionResultEnum;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
+import com.dihuan.question.mapper.QuestionMapper;
 import com.dihuan.question.mapper.QuestionSubmitMapper;
 import com.dihuan.question.service.QuestionService;
 import com.dihuan.question.service.QuestionSubmitService;
@@ -27,6 +28,9 @@ public class InnerQuestionController implements QuestionFeignClient {
 
     @Autowired
     private QuestionSubmitMapper questionSubmitMapper;
+
+    @Autowired
+    private QuestionMapper questionMapper;
 
     @Operation(summary = "获取题目原始信息详情")
     @GetMapping("getOriginQuestionInfo")
@@ -58,13 +62,27 @@ public class InnerQuestionController implements QuestionFeignClient {
                 .eq(QuestionSubmit::getUserId,userId)
                 .eq(QuestionSubmit::getQuestionResult, QuestionResultEnum.PASSED);
 
+
         Long theTimeOfPassTheQuestion = questionSubmitMapper.selectCount(questionSubmitLambdaQueryWrapper);
 
-        if(theTimeOfPassTheQuestion>0){
-            return false;
-        }else{
+        System.out.println(theTimeOfPassTheQuestion);
+        // 这个时候第一条通过的记录已经被存入了数据库，所以是=1
+        if(theTimeOfPassTheQuestion==1){
             return true;
+        }else{
+            return false;
         }
     }
+
+    @Override
+    public void incrementSubmitCount(Long questionId) {
+        questionMapper.incrementSubmitCount(questionId);
+    }
+
+    @Override
+    public void incrementAcceptedCount(Long questionId) {
+        questionMapper.incrementAcceptedCount(questionId);
+    }
+
 
 }

@@ -34,7 +34,12 @@ public enum ResultCodeEnum {
     USER_SAME_USERNAME_ERROR(408,"用户名已存在"),
     USER_SAME_EMAIL_ERROR(409,"邮箱已存在"),
     USER_REGISTER_ERROR(410,"用户注册失败"),
-    USER_RESET_PASSWORD_ERROR(411,"修改密码失败");
+    USER_RESET_PASSWORD_ERROR(411,"修改密码失败"),
+    USER_BANNED_ERROR(412,"用户被封禁"),
+
+    ADMINISTRATOR_PERMISSION_ERROR(501,"管理员权限不足"),
+
+    QUESTION_NOT_FOUND_ERROR(601,"题目不存在");
 
     // 状态码
     private final Integer code;

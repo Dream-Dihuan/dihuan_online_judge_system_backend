@@ -26,13 +26,15 @@ public class InnerUserController implements UserFeignClient {
 
     @GetMapping("increaseExperience")
     @Operation(summary = "增加用户经验值")
-    public void increaseExperience(@RequestParam Long userId,@RequestParam Long amount){
-        userMapper.increaseExperience(userId,amount);
+    public Boolean increaseExperience(@RequestParam Long userId,@RequestParam Long amount){
+        int thePersonAmount = userMapper.increaseExperience(userId, amount);
+        return thePersonAmount > 0;
     }
 
     @GetMapping("decreaseExperience")
     @Operation(summary = "减少用户经验值")
-    public void decreaseExperience(@RequestParam Long userId,@RequestParam Long amount){
-        userMapper.decreaseExperience(userId,amount);
+    public Boolean decreaseExperience(@RequestParam Long userId,@RequestParam Long amount){
+        int thePersonAmount = userMapper.decreaseExperience(userId,amount);
+        return thePersonAmount > 0;
     }
 }

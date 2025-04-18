@@ -14,9 +14,9 @@ public interface UserFeignClient {
 
     @GetMapping("increaseExperience")
     @Operation(summary = "增加用户经验值")
-    void increaseExperience(@RequestParam("userId") Long userId, @RequestParam("amount") Long amount);
+    Boolean increaseExperience(@RequestParam("userId") Long userId, @RequestParam("amount") Long amount);
 
     @GetMapping("decreaseExperience")
     @Operation(summary = "减少用户经验值")
-    void decreaseExperience(@RequestParam("userId") Long userId,@RequestParam("amount") Long amount);
+    Boolean decreaseExperience(@RequestParam("userId") Long userId,@RequestParam("amount") Long amount);
 }

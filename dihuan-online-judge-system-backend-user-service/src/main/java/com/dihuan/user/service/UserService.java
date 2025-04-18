@@ -30,4 +30,8 @@ public interface UserService extends IService<User> {
     void userRegister(UserRegisterDto userRegisterDto);
 
     void resetPassword(ResetPasswordDto resetPasswordDto);
+
+    void toggleBanStatus(Long userId);
+
+    void updateUserRole(Long id, Long roleId);
 }

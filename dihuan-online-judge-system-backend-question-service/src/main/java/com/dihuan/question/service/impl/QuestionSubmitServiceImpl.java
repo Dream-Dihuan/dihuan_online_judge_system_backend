@@ -1,16 +1,19 @@
 package com.dihuan.question.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.dihuan.common.exception.DihuanException;
 import com.dihuan.common.localThread.TokenInfoHolder;
 import com.dihuan.common.result.DihuanPage;
 import com.dihuan.common.result.ResultCodeEnum;
 import com.dihuan.model.dto.question.QuestionSubmitDto;
+import com.dihuan.model.entity.Question;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionNumberVo;
 import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
+import com.dihuan.question.mapper.QuestionMapper;
 import com.dihuan.question.mapper.QuestionSubmitMapper;
 import com.dihuan.question.rabbitMq.QuestionSubmitProducer;
 import com.dihuan.question.service.QuestionSubmitService;
@@ -29,6 +32,10 @@ import java.util.List;
 public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper, QuestionSubmit>
     implements QuestionSubmitService {
 
+
+    @Autowired
+    private QuestionMapper questionMapper;
+
     @Autowired
     private QuestionSubmitMapper questionSubmitMapper;
 
@@ -37,6 +44,17 @@ public class QuestionSubmitServiceImpl extends ServiceImpl<QuestionSubmitMapper,
 
     @Override
     public Long submitQuestionAnswer(QuestionSubmitDto questionSubmitDto) {
+
+        // 判断题目是否存在以及是否发布
+        LambdaQueryWrapper<Question> questionLambdaQueryWrapper = new LambdaQueryWrapper<Question>();
+        questionLambdaQueryWrapper
+                .eq(Question::getCheckStatus, 1)
+                .eq(Question::getId, questionSubmitDto.getQuestionId());
+        Long findQuestionNumber = questionMapper.selectCount(questionLambdaQueryWrapper);
+        if(findQuestionNumber==0){
+            throw new DihuanException(ResultCodeEnum.QUESTION_NOT_FOUND_ERROR);
+        }
+
         QuestionSubmit questionSubmit = new QuestionSubmit();
         BeanUtils.copyProperties(questionSubmitDto,questionSubmit);
         boolean save = this.save(questionSubmit);

@@ -4,6 +4,7 @@ import com.dihuan.model.entity.Question;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
 import io.swagger.v3.oas.annotations.Operation;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,4 +27,12 @@ public interface QuestionFeignClient {
     @Operation(summary = "是否第一次通过该题目")
     Boolean firstPassTheQuestion(@RequestParam("questionId") Long questionId,@RequestParam("userId") Long userId);
 
+    @GetMapping("incrementSubmitCount")
+    @Operation(summary = "增加题目提交数")
+    void incrementSubmitCount(@RequestParam("questionId") Long questionId);
+
+    // 仅增加通过数
+    @GetMapping("incrementAcceptedCount")
+    @Operation(summary = "增加题目通过数")
+    void incrementAcceptedCount(@RequestParam("questionId") Long questionId);
 }

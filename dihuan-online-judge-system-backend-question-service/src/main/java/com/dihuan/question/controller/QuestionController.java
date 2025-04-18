@@ -39,16 +39,17 @@ public class QuestionController {
                                                           @RequestParam(required = false)Long authorId,
                                                           @RequestParam(required = false)Boolean collected,
                                                           @RequestParam(required = false)Boolean subscribeUser,
+                                                          @RequestParam(required = false)Long checkStatus,
                                                           @RequestParam(defaultValue = "1")Integer page,
                                                           @RequestParam(defaultValue = "20")Integer pageSize) {
-        DihuanPage<QuestionVo> pageResult =  questionService.getQuestionList(title,tag,id,authorId,collected,subscribeUser,page,pageSize);
+        DihuanPage<QuestionVo> pageResult =  questionService.getQuestionList(title,tag,id,authorId,collected,subscribeUser,checkStatus,page,pageSize);
         return Result.success(pageResult);
     }
 
     @Operation(summary = "获取题目信息详情")
     @GetMapping("getQuestionInfo")
-    public Result<QuestionInfoVo> getQuestionInfo(@RequestParam Long id) {
-        QuestionInfoVo questionInfoVo = questionService.getQuestionInfo(id);
+    public Result<QuestionInfoVo> getQuestionInfo(@RequestParam Long id,@RequestParam(required = false,defaultValue = "1") Long checkStatus) {
+        QuestionInfoVo questionInfoVo = questionService.getQuestionInfo(id,checkStatus);
         return Result.success(questionInfoVo);
     }
 
@@ -65,6 +66,13 @@ public class QuestionController {
     @DeleteMapping("deleteQuestionInfo")
     public Result deleteQuestionInfo(@RequestParam Long id) {
         questionService.removeById(id);
+        return Result.success();
+    }
+
+    @Operation(summary = "更改题目审核状态")
+    @GetMapping("updateCheckStatus")
+    public Result updateCheckStatus(@RequestParam Long id,@RequestParam Long checkStatus) {
+        questionService.updateCheckStatus(id,checkStatus);
         return Result.success();
     }
 }

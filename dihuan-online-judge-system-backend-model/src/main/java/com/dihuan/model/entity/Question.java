@@ -76,6 +76,10 @@ public class Question extends BaseEntity {
     @Schema(description = "作者用户ID")
     private Long authorId;
 
+    @TableField(value = "check_status")
+    @Schema(description = "题目审核状态")
+    private Long checkStatus;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

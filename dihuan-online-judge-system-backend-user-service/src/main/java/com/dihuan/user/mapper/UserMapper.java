@@ -26,6 +26,12 @@ public interface UserMapper extends BaseMapper<User> {
     @Update("UPDATE user SET experience = IF(experience >= #{amount}, experience - #{amount}, 0) WHERE id = #{userId}")
     int decreaseExperience(Long userId,Long amount);
 
+    @Update("UPDATE user SET is_banned = NOT is_banned, update_time = NOW() WHERE id = #{userId}")
+    int toggleBanStatus(Long userId);
+
+    @Update("UPDATE user SET role_id = #{roleId}, update_time = NOW() WHERE id = #{id}")
+    int updateUserRole(Long id,Long roleId);
+
 }
 
 

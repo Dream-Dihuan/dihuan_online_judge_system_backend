@@ -103,6 +103,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new DihuanException(ResultCodeEnum.USER_NOT_FOUND_ERROR);
         }
 
+        // 用户是否被封禁
+        if(theAimUseer.getIsBanned()==1){
+            throw new DihuanException(ResultCodeEnum.USER_BANNED_ERROR);
+        }
+
         if(!theAimUseer.getPassword().equals(userLoginDto.getPassword())){
             throw new DihuanException(ResultCodeEnum.USER_PASSWORD_ERROR);
         }
@@ -146,6 +151,33 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
     }
 
+    @Override
+    public void toggleBanStatus(Long userId) {
+        // 判断操作这是否有封禁/解封用户的权限
+        Long administratorId = TokenInfoHolder.getTokenInfo().getId();
+        User administratorUser = this.getById(administratorId);
+        Long roleId = administratorUser.getRoleId();
+        if(roleId==2||roleId==3){
+            userMapper.toggleBanStatus(userId);
+            return;
+        }
+
+        throw new DihuanException(ResultCodeEnum.ADMINISTRATOR_PERMISSION_ERROR);
+
+
+    }
+
+    @Override
+    public void updateUserRole(Long id, Long roleId) {
+        // 判断操作这是否有给予用户权限的权限
+        Long administratorId = TokenInfoHolder.getTokenInfo().getId();
+        User administratorUser = this.getById(administratorId);
+        if(administratorUser.getRoleId()!=3L){
+            throw new DihuanException(ResultCodeEnum.ADMINISTRATOR_PERMISSION_ERROR);
+        }
+
+        userMapper.updateUserRole(id,roleId);
+    }
 
 
 }

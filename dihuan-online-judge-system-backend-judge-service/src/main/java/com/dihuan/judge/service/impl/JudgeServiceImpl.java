@@ -59,6 +59,10 @@ public class JudgeServiceImpl implements JudgeService {
             throw new DihuanException(ResultCodeEnum.FAIL, "题目正在判题中");
         }
         // 设置题目提交记录正在判题中，并更新到数据库，防止重复执行
+
+            // 题目提交数+1
+            questionFeignClient.incrementSubmitCount(questionSubmitInfoVo.getQuestionId());
+
         questionSubmitInfoVo.setJudgeStatus(JudgeStatusEnum.JUDGING);
         BeanUtils.copyProperties(questionSubmitInfoVo, questionSubmit);
         Boolean firstUpdated = questionFeignClient.updateQuestionSubmitInfo(questionSubmit);
@@ -88,7 +92,8 @@ public class JudgeServiceImpl implements JudgeService {
 
         System.out.println("ok");
         JudgeResultInfo judgeResultInfo = new DefaultJudgeStrategy().doJudge(judgeContext);
-
+        System.out.println("判题完成");
+        System.out.println(judgeResultInfo);
 
         // 修改数据库中的结果
         questionSubmitInfoVo.setQuestionResult(judgeResultInfo.getQuestionResult());
@@ -100,6 +105,16 @@ public class JudgeServiceImpl implements JudgeService {
             throw new DihuanException(ResultCodeEnum.FAIL, "题目提交记录更新失败");
         }
 
+
+
+        // 判断用户是否做题正确，正确则增加题目通过数
+        if (judgeResultInfo.getQuestionResult().equals(QuestionResultEnum.PASSED)) {
+            questionFeignClient.incrementAcceptedCount(questionSubmitInfoVo.getQuestionId());
+        }
+
+
+
+
         // 判断该用户是否第一次通过此题，是的话就增加经验值
         Long userId = questionSubmitInfoVo.getUserId();
         Long questionId = questionSubmitInfoVo.getQuestionId();
@@ -108,9 +123,11 @@ public class JudgeServiceImpl implements JudgeService {
 
         Boolean firstPassTheQuestion = questionFeignClient.firstPassTheQuestion(questionId, userId);
 
+        System.out.println(firstPassTheQuestion);
         if(firstPassTheQuestion){
-            userFeignClient.increaseExperience(userId,20L);
-            userFeignClient.decreaseExperience(authorId, 2L);
+            Long theExperienceOfPassAQuestion = 20L;
+            userFeignClient.increaseExperience(userId,theExperienceOfPassAQuestion);
+            userFeignClient.increaseExperience(authorId, (long) (theExperienceOfPassAQuestion*0.1));
         }
 
 

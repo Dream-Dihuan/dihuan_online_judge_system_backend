@@ -13,6 +13,7 @@
                user.password,
                user.phone,
                user.birthday,
+               user.role_id,
                user.email,
                user.experience,
                user_image.avatar_url,
@@ -36,6 +37,8 @@
                user.subscribe_number,
                user.username,
                user.experience,
+               user.role_id,
+               user.is_banned,
                CASE
                    WHEN user_subscribe.subscribed_id IS NOT NULL THEN TRUE
                    ELSE FALSE

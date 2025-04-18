@@ -28,4 +28,7 @@ public class QuestionVo {
 
     @Schema(description = "用户是否收藏")
     private Boolean collected;
+
+    @Schema(description = "题目审核状态")
+    private Long checkStatus;
 }

@@ -15,6 +15,7 @@
           and question_submit.question_result = 1
           and question_submit.is_deleted = 0
           and question.is_deleted = 0
+          and question.check_status=1
         order by question.id asc
     </select>
 
@@ -29,6 +30,7 @@
           and question_submit.question_result = 2
           and question_submit.is_deleted = 0
           and question.is_deleted = 0
+          and question.check_status=1
           and not exists (
                 select *
                 from question_submit
@@ -66,7 +68,8 @@
             judge_result_info,
             DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') as create_time
         FROM question_submit
-        WHERE id = #{id}
+        LEFT JOIN question on question_submit.question_id = question.id and question.is_deleted = 0
+        WHERE id = #{id} and question.check_status=1
     </select>
     <select id="getQuestionSubmitList" resultType="com.dihuan.model.vo.question.QuestionSubmitListItemVo">
         SELECT
@@ -88,6 +91,7 @@
         qs.is_deleted = 0
         AND q.is_deleted = 0
         AND u.is_deleted = 0
+        AND q.check_status = 1
         <if test="userId != null">
             AND qs.user_id = #{userId}
         </if>

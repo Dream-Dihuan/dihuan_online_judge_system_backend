@@ -91,7 +91,8 @@
         CASE
         WHEN question_collections.question_id IS NOT NULL THEN 1
         ELSE 0
-        END AS collected
+        END AS collected,
+        question.check_status
         FROM question
         LEFT JOIN question_collections
         ON question.id = question_collections.question_id
@@ -122,6 +123,9 @@
             <if test="subscribeUser != null and subscribeUser">
                 AND question.author_id in (select user_subscribe.subscribed_id from user_subscribe where user_subscribe.is_deleted = 0 and user_subscribe.user_id = #{userId})
             </if>
+            <if test="checkStatus != null">
+                AND question.check_status = #{checkStatus}
+            </if>
             AND question.is_deleted = 0
         </where>
         ORDER BY question.id ASC
@@ -150,6 +154,11 @@
                 END AS collected
         from question
         left join question_collections on question.id = question_collections.question_id and question_collections.user_id = #{userId} and question_collections.is_deleted = 0
-        where question.id = #{id} and question.is_deleted = 0
+        <where>
+            <if test="checkStatus != null">
+                AND question.check_status = #{checkStatus}
+            </if>
+        </where>
+        and question.id = #{id} and question.is_deleted = 0
     </select>
 </mapper>

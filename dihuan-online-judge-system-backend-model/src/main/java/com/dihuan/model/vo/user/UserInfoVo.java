@@ -48,6 +48,9 @@ public class UserInfoVo extends BaseEntity implements Serializable{
     @Schema(description = "用户头像url")
     private String avatarUrl;
 
+    @Schema(description = "用户权限ID")
+    private Long roleId;
+
     @Schema(description = "用户banner图url")
     private String bannerUrl;
 

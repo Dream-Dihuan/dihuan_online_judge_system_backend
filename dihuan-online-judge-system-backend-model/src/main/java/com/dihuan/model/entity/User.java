@@ -57,7 +57,15 @@ public class User extends BaseEntity implements Serializable{
     @Schema(description = "电子邮箱")
     private String email;
 
+    @TableField(value = "role_id")
+    @Schema(description = "权限角色id")
+    private Long roleId;
+
     @TableField(value = "experience")
     @Schema(description = "经验值")
     private Long experience;
+
+    @TableField(value = "is_banned")
+    @Schema(description = "是否封禁 (0-否/1-是)")
+    private byte isBanned;
 }

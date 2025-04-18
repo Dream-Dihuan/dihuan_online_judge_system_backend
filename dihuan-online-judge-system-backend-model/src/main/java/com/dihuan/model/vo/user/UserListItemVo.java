@@ -26,4 +26,10 @@ public class UserListItemVo {
 
     @Schema(description = "是否关注")
     private Boolean subscribeStatus;
+
+    @Schema(description = "是否封禁 (0-否/1-是)")
+    private Boolean isBanned;
+
+    @Schema(description = "权限角色ID")
+    private Long roleId;
 }

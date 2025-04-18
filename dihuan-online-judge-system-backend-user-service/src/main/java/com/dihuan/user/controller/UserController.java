@@ -17,6 +17,7 @@ import com.dihuan.model.vo.user.UserListItemVo;
 import com.dihuan.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -80,5 +81,19 @@ public class UserController {
     public Result<DihuanPage<UserListItemVo>> getUserList(@RequestBody UserListDto userListDto){
         DihuanPage<UserListItemVo> userList = userService.getUserList(userListDto);
         return Result.success(userList);
+    }
+
+    @Operation(summary = "封禁/解封用户")
+    @GetMapping("toggleBanStatus")
+    public Result toggleBanStatus(@RequestParam Long userId){
+        userService.toggleBanStatus(userId);
+        return Result.success();
+    }
+
+    @Operation(summary = "修改用户权限角色")
+    @GetMapping("updateUserRole")
+    public Result updateUserRole(@RequestParam Long id,@RequestParam Long roleId){
+        userService.updateUserRole(id,roleId);
+        return Result.success();
     }
 }
