@@ -81,7 +81,17 @@ public class DefaultJudgeStrategy implements JudgeStrategy {
                 judgeCaseResultList.add(judgeCaseResult);
                 continue;
             }
-            if(!judgeCaseList.get(i).getOutput().equals(executeCodeInfoList.get(i).getOutput())){
+
+            String userOriOutput = executeCodeInfoList.get(i).getOutput();
+            String userOutput = executeCodeInfoList.get(i).getOutput().trim();
+            String answerOri = judgeCaseList.get(i).getOutput();
+            String answer = judgeCaseList.get(i).getOutput().trim();
+            System.out.println(userOriOutput);
+            System.out.println(answerOri);
+            System.out.println(userOutput);
+            System.out.println(answer);
+
+            if(!judgeCaseList.get(i).getOutput().trim().equals(executeCodeInfoList.get(i).getOutput().trim())){
                 //答案错误
                 judgeCaseResult.setJudgeResultEnum(JudgeResultEnum.WRONG_ANSWER);
                 questionResultEnum = QuestionResultEnum.FAILED;

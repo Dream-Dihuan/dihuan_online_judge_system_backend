@@ -49,7 +49,7 @@ public class JudgeServiceImpl implements JudgeService {
         }
 
         // 2.获取题目信息
-        Question questionInfo = questionFeignClient.getOriginQuestionInfo(questionSubmitInfoVo.getQuestionId());
+        Question questionInfo = questionFeignClient.getOriginQuestionInfo(questionSubmitInfoVo.getQuestionId(),1L);
         if (questionInfo == null) {
             throw new DihuanException(ResultCodeEnum.FAIL, "获取题目信息失败");
         }

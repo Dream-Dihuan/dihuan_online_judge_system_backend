@@ -13,7 +13,7 @@ public interface QuestionFeignClient {
 
     @GetMapping("getOriginQuestionInfo")
     @Operation(summary = "获取题目信息")
-    Question getOriginQuestionInfo(@RequestParam("id") Long id);
+    Question getOriginQuestionInfo(@RequestParam("id") Long id,@RequestParam("checkStatus") Long checkStatus);
 
     @GetMapping("getQuestionSubmitInfo")
     @Operation(summary = "获取题目提交信息")

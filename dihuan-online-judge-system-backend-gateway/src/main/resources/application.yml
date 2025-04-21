@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: dihuan-gateway
@@ -6,10 +7,10 @@ spring:
       filter:
         enabled: true
       transport:
-        dashboard: localhost:8090
+        dashboard: 120.77.34.115:8858
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 120.77.34.115:8848
     gateway:
       routes:
         - id: dihuan-user-service
@@ -41,3 +42,5 @@ knife4j:
       enabled: true
       # ④ 第四行配置
       version: openapi3
+server:
+  port: 8080

@@ -55,8 +55,8 @@ public class QuestionController {
 
     @Operation(summary = "获取题目原始信息详情")
     @GetMapping("getOriginQuestionInfo")
-    public Result<Question> getOriginQuestionInfo(@RequestParam Long id) {
-        Question questionInfo = questionService.getOriginQuestionInfo(id);
+    public Result<Question> getOriginQuestionInfo(@RequestParam Long id,@RequestParam(required = false) Long checkStatus) {
+        Question questionInfo = questionService.getOriginQuestionInfo(id,checkStatus);
         return Result.success(questionInfo);
     }
 

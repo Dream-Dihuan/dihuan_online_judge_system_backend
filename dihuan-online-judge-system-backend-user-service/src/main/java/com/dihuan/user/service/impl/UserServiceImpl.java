@@ -49,7 +49,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public UserInfoVo getUserInfo(Long id) {
-            Long userId = TokenInfoHolder.getTokenInfo().getId();
+        Long userId = TokenInfoHolder.getTokenInfo().getId();
+
         if(id==null){
             id = TokenInfoHolder.getTokenInfo().getId();
         }

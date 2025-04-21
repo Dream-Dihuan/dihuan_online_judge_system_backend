@@ -58,7 +58,7 @@
 
     <select id="getQuestionSubmitInfo" resultMap="questionSubmitVoMap">
         SELECT
-            id,
+            question_submit.id,
             question_id,
             user_id,
             language,
@@ -66,10 +66,10 @@
             judge_status,
             question_result,
             judge_result_info,
-            DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') as create_time
+            DATE_FORMAT(question_submit.create_time, '%Y-%m-%d %H:%i:%s') as create_time
         FROM question_submit
         LEFT JOIN question on question_submit.question_id = question.id and question.is_deleted = 0
-        WHERE id = #{id} and question.check_status=1
+        WHERE question_submit.id = #{id} and question.check_status=1
     </select>
     <select id="getQuestionSubmitList" resultType="com.dihuan.model.vo.question.QuestionSubmitListItemVo">
         SELECT

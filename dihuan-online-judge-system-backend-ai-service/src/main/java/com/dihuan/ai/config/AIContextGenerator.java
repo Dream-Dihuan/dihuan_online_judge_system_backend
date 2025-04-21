@@ -28,13 +28,16 @@ public class AIContextGenerator {
     public static List<AIContentItem> GetFullContext(ChatDto chatDto,QuestionFeignClient questionFeignClient){
         List<AIContentItem> list = chatDto.getMessages();
         List<AIContentItem> aiContextEntities = new ArrayList<>();
+        aiContextEntities.addAll(system_context);
         if(chatDto.getQuestionId()!=null){
-            String questionInfo = questionFeignClient.getOriginQuestionInfo(chatDto.getQuestionId()).toString();
+            String questionInfo = questionFeignClient.getOriginQuestionInfo(chatDto.getQuestionId(),1L).toString();
+            System.out.println("获取了题目信息");
             aiContextEntities.add(new AIContentItem("system","请为用户解答以下的算法问题"));
             aiContextEntities.add(new AIContentItem("system",questionInfo));
         }
-        aiContextEntities.addAll(system_context);
         aiContextEntities.addAll(list);
+        System.out.println("对话上下文");
+        System.out.println(aiContextEntities);
         return aiContextEntities;
     }
 

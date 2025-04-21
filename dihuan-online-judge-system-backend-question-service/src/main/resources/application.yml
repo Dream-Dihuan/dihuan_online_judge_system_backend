@@ -1,27 +1,27 @@
 spring:
   application:
     name: dihuan-question-service
-  rabbitmq:
-    host: 192.168.200.130
-    port: 5672
-    password: thw20030806
-    username: thw20030806
-  cloud:
-    sentinel:
-      filter:
-        enabled: true
-      transport:
-        dashboard: localhost:8090
-    nacos:
-      discovery:
-        server-addr: 127.0.0.1:8848
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/dihuan_online_judge_system
-    username: root
-    password: thw20030806
+#  rabbitmq:
+#    host: 192.168.200.130
+#    port: 5672
+#    password: thw20030806
+#    username: thw20030806
+#  cloud:
+#    sentinel:
+#      filter:
+#        enabled: true
+#      transport:
+#        dashboard: localhost:8090
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/dihuan_online_judge_system
+#    username: root
+#    password: thw20030806
 server:
-  port: 8086
+  port: 8082
   servlet:
     context-path: /api/question
 #springdoc:

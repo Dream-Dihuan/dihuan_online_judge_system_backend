@@ -34,8 +34,8 @@ public class InnerQuestionController implements QuestionFeignClient {
 
     @Operation(summary = "获取题目原始信息详情")
     @GetMapping("getOriginQuestionInfo")
-    public Question getOriginQuestionInfo(@RequestParam Long id) {
-        Question questionInfo = questionService.getOriginQuestionInfo(id);
+    public Question getOriginQuestionInfo(@RequestParam Long id,@RequestParam(required = false,defaultValue = "1") Long checkStatus) {
+        Question questionInfo = questionService.getOriginQuestionInfo(id,checkStatus);
         return questionInfo;
     }
 

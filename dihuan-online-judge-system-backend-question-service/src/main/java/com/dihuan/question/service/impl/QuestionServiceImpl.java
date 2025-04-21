@@ -44,7 +44,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
             // 判断题目是否存在以及是否发布
             LambdaQueryWrapper<Question> questionLambdaQueryWrapper = new LambdaQueryWrapper<Question>();
             questionLambdaQueryWrapper
-                    .eq(Question::getCheckStatus, 1)
+//                    .eq(Question::getCheckStatus, 1)
                     .eq(Question::getId, addOrUpdateQuestionInfoDto.getId());
             Long findQuestionNumber = questionMapper.selectCount(questionLambdaQueryWrapper);
             if(findQuestionNumber==0){
@@ -52,10 +52,17 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
             }
         }
 
-        question.setAuthorId(authorId);
+        // 如果已经有作者了，则不更新该字段
+        if(question.getAuthorId()==null){
+            question.setAuthorId(authorId);
+        }
+
 
         BeanUtils.copyProperties(addOrUpdateQuestionInfoDto,question);
         this.saveOrUpdate(question);
+
+        // 将此题目设置为待审核状态
+        questionMapper.updateCheckStatus(question.getId(),0L);
     }
 
     @Override
@@ -77,8 +84,12 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
-    public Question getOriginQuestionInfo(Long id) {
-        Question question = this.getById(id);
+    public Question getOriginQuestionInfo(Long id,Long checkStatus) {
+        LambdaQueryWrapper<Question> questionLambdaQueryWrapper = new LambdaQueryWrapper<>();
+        questionLambdaQueryWrapper
+                .eq(Question::getId,id)
+                .eq(checkStatus != null,Question::getCheckStatus,checkStatus);
+        Question question = this.getOne(questionLambdaQueryWrapper);
         return question;
     }
 

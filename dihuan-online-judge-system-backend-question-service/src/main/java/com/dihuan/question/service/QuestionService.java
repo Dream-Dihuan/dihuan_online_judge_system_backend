@@ -22,7 +22,7 @@ public interface QuestionService extends IService<Question> {
 
     QuestionInfoVo getQuestionInfo(Long id,Long checkStatus);
 
-    Question getOriginQuestionInfo(Long id);
+    Question getOriginQuestionInfo(Long id,Long checkStatus);
 
     void updateCheckStatus(Long id, Long checkStatus);
 }

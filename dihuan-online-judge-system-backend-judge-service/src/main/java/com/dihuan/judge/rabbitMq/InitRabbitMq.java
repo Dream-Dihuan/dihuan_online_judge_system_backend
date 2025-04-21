@@ -8,8 +8,9 @@ public class InitRabbitMq {
 
     public static void doInit() {
         try {
+            // todo 改ip
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("192.168.200.130");
+            factory.setHost("120.77.34.115");
             factory.setPort(5672);
             factory.setUsername("thw20030806");
             factory.setPassword("thw20030806");

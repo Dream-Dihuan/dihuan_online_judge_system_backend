@@ -38,6 +38,7 @@
         <spring-ai-ollama-spring-boot-starter.version>1.0.0-M6</spring-ai-ollama-spring-boot-starter.version>
         <minio.version>8.5.3</minio.version>
         <hutool-all.version>5.8.13</hutool-all.version>
+        <okhttp.version>4.9.3</okhttp.version>
     </properties>
 
 
@@ -156,6 +157,22 @@
                 <version>${spring-ai-ollama-spring-boot-starter.version}</version>
             </dependency>
 
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+                <version>1.0.0-M6</version>
+            </dependency>
+
+
+            <!-- okhttp -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>${okhttp.version}</version>
+            </dependency>
+
+
             <!-- MINIO -->
             <dependency>
                 <groupId>io.minio</groupId>
@@ -172,4 +189,23 @@
         </dependencies>
 
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>${spring-boot.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal> <!-- 关键！ -->
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
