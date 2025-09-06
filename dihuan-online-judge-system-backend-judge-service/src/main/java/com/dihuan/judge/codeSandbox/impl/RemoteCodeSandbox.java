@@ -15,7 +15,7 @@ public class RemoteCodeSandbox implements CodeSandbox {
 
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
         // todo 改ip
-        String url = "http://120.77.34.115:8101/codeSandbox/executeCode";
+        String url = "http://192.168.200.130:8101/codeSandbox/executeCode";
         String json = JSONUtil.toJsonStr(executeCodeRequest);
         String responseStr = HttpUtil.createPost(url)
                 .header("Content-Type", "application/json")

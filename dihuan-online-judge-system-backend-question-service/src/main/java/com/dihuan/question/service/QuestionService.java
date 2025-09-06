@@ -8,6 +8,8 @@ import com.dihuan.model.vo.question.QuestionInfoVo;
 import com.dihuan.model.vo.question.QuestionVo;
 import com.dihuan.model.entity.Question;
 
+import java.util.List;
+
 /**
 * @author 迪幻
 * @description 针对表【question(题目信息表)】的数据库操作Service
@@ -25,4 +27,6 @@ public interface QuestionService extends IService<Question> {
     Question getOriginQuestionInfo(Long id,Long checkStatus);
 
     void updateCheckStatus(Long id, Long checkStatus);
+
+    void importQuestionInfo(Long authorId,Long checkStatus, List<Question> questionList);
 }

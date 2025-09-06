@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/")
@@ -73,6 +74,13 @@ public class QuestionController {
     @GetMapping("updateCheckStatus")
     public Result updateCheckStatus(@RequestParam Long id,@RequestParam Long checkStatus) {
         questionService.updateCheckStatus(id,checkStatus);
+        return Result.success();
+    }
+
+    @Operation(summary = "批量导入题目信息")
+    @PostMapping("importQuestionInfo")
+    public Result importQuestionInfo(@RequestParam Long authorId,@RequestParam(required = false,defaultValue = "0") Long checkStatus,@RequestBody List<Question> questionList) {
+        questionService.importQuestionInfo(authorId,checkStatus,questionList);
         return Result.success();
     }
 }

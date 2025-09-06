@@ -13,9 +13,13 @@ import com.dihuan.model.vo.question.QuestionVo;
 import com.dihuan.model.entity.Question;
 import com.dihuan.question.mapper.QuestionMapper;
 import com.dihuan.question.service.QuestionService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
 * @author 迪幻
@@ -96,6 +100,15 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public void updateCheckStatus(Long id, Long checkStatus) {
         questionMapper.updateCheckStatus(id,checkStatus);
+    }
+
+    @Override
+    public void importQuestionInfo(Long authorId,Long checkStatus, List<Question> questionList) {
+        for (Question question : questionList) {
+            question.setAuthorId(authorId);
+            question.setCheckStatus(checkStatus);
+        }
+        this.saveBatch(questionList);
     }
 
 
