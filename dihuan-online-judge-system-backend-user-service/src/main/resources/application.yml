@@ -1,12 +1,12 @@
 spring:
   application:
     name: dihuan-user-service
-#  data:
-#    redis:
-#      host: 120.77.34.115
-#      port: 6379
-#      database: 0
-#      password: thw20030806
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      password: dihuan
   servlet:
     multipart:
       max-file-size: 20MB
@@ -15,8 +15,8 @@ spring:
   mail:
     host: smtp.qq.com
     port: 587
-    username: 449134710@qq.com
-    password: zmzywezflkvibicd
+    username: dream-dihuan@qq.com
+    password: qboqmwmcagocbiag
     properties:
       from: 449134710@qq.com
       mail:
@@ -27,20 +27,22 @@ spring:
           connectiontimeout: 10000
           timeout: 10000
           write-timeout: 10000
-#  cloud:
-#    sentinel:
-#      filter:
-#        enabled: true
-#      transport:
-#        dashboard: 120.77.34.115:8858
-#    nacos:
-#      discovery:
-#        server-addr: 120.77.34.115:8848
-#  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://120.77.34.115:3306/dihuan_online_judge_system
-#    username: root
-#    password: thw20030806
+  cloud:
+    sentinel:
+      filter:
+        enabled: true
+      transport:
+        dashboard: 127.0.0.1:8858
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+        username: nacos
+        password: nacos
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dihuan_online_judge_system
+    username: root
+    password: root
 server:
   port: 8081
   servlet:
@@ -61,10 +63,9 @@ knife4j:
   enable: true
 #
 
- #todo 改ip
 minio:
-  endpoint: http://192.168.200.130:9000
-  access-key: thw20030806
-  secret-key: thw20030806
+  endpoint: http://127.0.0.1:9000
+  access-key: dihuanAdmin
+  secret-key: dihuanAdmin
   avatar-bucket-name: user-avatar
   banner-bucket-name: user-banner

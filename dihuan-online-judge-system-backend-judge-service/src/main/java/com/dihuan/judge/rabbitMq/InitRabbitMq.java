@@ -10,10 +10,10 @@ public class InitRabbitMq {
         try {
             // todo 改ip
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("192.168.200.130");
+            factory.setHost("127.0.0.1");
             factory.setPort(5672);
-            factory.setUsername("thw20030806");
-            factory.setPassword("thw20030806");
+            factory.setUsername("dihuan");
+            factory.setPassword("dihuan");
 
             Connection connection = factory.newConnection();
             Channel channel = connection.createChannel();
