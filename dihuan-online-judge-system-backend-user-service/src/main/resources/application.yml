@@ -64,7 +64,8 @@ knife4j:
 #
 
 minio:
-  endpoint: http://127.0.0.1:9000
+  # todo 改IP
+  endpoint: http://154.219.114.60:9000
   access-key: dihuanAdmin
   secret-key: dihuanAdmin
   avatar-bucket-name: user-avatar
