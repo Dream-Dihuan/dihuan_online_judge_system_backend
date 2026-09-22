@@ -50,7 +50,7 @@ public class DihuanPage<T> extends Page<T> {
         this.total = 0L;
         this.size = 10L;
         this.current = 1L;
-        this.orders = new ArrayList();
+        this.orders = new ArrayList<>();
         this.optimizeCountSql = true;
         this.searchCount = true;
         this.optimizeJoinOfCountSql = true;

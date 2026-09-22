@@ -10,7 +10,7 @@ public class InitRabbitMq {
         try {
             // todo 改ip
             ConnectionFactory factory = new ConnectionFactory();
-            factory.setHost("154.219.114.60");
+            factory.setHost("127.0.0.1");
             factory.setPort(5672);
             factory.setUsername("dihuan");
             factory.setPassword("dihuan");
