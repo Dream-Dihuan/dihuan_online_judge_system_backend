@@ -2,23 +2,28 @@ spring:
   application:
     name: dihuan-ai-service
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/dihuan_online_judge_system
-    username: root
-    password: root
+    driver-class-name: org.postgresql.Driver
+    url: ${RAG_DATABASE_URL:jdbc:postgresql://127.0.0.1:5432/dihuan_online_judge_system}
+    username: ${RAG_DATABASE_USERNAME:postgres}
+    password: ${RAG_DATABASE_PASSWORD:postgres}
   ai:
     openai:
-      base-url: https://api.deepseek.com
-      api-key: sk-f3ec976dd1b64ba8aba22ecd6d774a61
+      # OpenAI-compatible remote API. The provider must support /embeddings.
+      base-url: ${AI_API_BASE_URL:https://api.openai.com}
+      api-key: ${AI_API_KEY}
       chat:
         options:
-          model: deepseek-chat
+          model: ${AI_CHAT_MODEL:deepseek-chat}
     ollama:
       base-url: http://localhost:11434
       chat:
         model: qwen2.5-coder:1.5b
-
-
+    vectorstore:
+      pgvector:
+        initialize-schema: true
+        dimensions: ${RAG_EMBEDDING_DIMENSION:1536}
+        index-type: HNSW
+        distance-type: COSINE_DISTANCE
   cloud:
     sentinel:
       filter:
@@ -30,6 +35,14 @@ spring:
         server-addr: 127.0.0.1:8848
         username: nacos
         password: nacos
+rag:
+  embedding:
+    provider: dashscope
+    model: ${RAG_EMBEDDING_MODEL:qwen3.7-text-embedding}
+    dimension: ${RAG_EMBEDDING_DIMENSION:1536}
+  search:
+    keyword-weight: ${RAG_KEYWORD_WEIGHT:0.3}
+    semantic-weight: ${RAG_SEMANTIC_WEIGHT:0.7}
 server:
   port: 8084
   servlet:

@@ -8,18 +8,19 @@ import com.dihuan.common.localThread.TokenInfoHolder;
 import com.dihuan.common.result.DihuanPage;
 import com.dihuan.common.result.ResultCodeEnum;
 import com.dihuan.model.dto.question.AddOrUpdateQuestionInfoDto;
+import com.dihuan.model.dto.ai.RagQuestionDocument;
 import com.dihuan.model.vo.question.QuestionInfoVo;
 import com.dihuan.model.vo.question.QuestionVo;
 import com.dihuan.model.entity.Question;
 import com.dihuan.question.mapper.QuestionMapper;
 import com.dihuan.question.service.QuestionService;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.dihuan.serviceClient.service.QuestionRagFeignClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.io.Serializable;
 
 /**
 * @author 迪幻
@@ -32,6 +33,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
     @Autowired
     private QuestionMapper questionMapper;
+
+    @Autowired
+    private QuestionRagFeignClient questionRagFeignClient;
 
     @Override
     public void AddOrUpdateQuestionInfo(AddOrUpdateQuestionInfoDto addOrUpdateQuestionInfoDto) {
@@ -67,6 +71,7 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
 
         // 将此题目设置为待审核状态
         questionMapper.updateCheckStatus(question.getId(),0L);
+        questionRagFeignClient.deleteQuestion(question.getId());
     }
 
     @Override
@@ -100,6 +105,14 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     @Override
     public void updateCheckStatus(Long id, Long checkStatus) {
         questionMapper.updateCheckStatus(id,checkStatus);
+        Question question = this.getById(id);
+        if (question != null) {
+            if (Long.valueOf(1L).equals(checkStatus)) {
+                syncQuestionToRag(question);
+            } else {
+                questionRagFeignClient.deleteQuestion(id);
+            }
+        }
     }
 
     @Override
@@ -109,6 +122,32 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
             question.setCheckStatus(checkStatus);
         }
         this.saveBatch(questionList);
+        for (Question question : questionList) {
+            if (Long.valueOf(1L).equals(checkStatus)) {
+                syncQuestionToRag(question);
+            } else {
+                questionRagFeignClient.deleteQuestion(question.getId());
+            }
+        }
+    }
+
+    @Override
+    public boolean removeById(Serializable id) {
+        boolean removed = super.removeById(id);
+        if (removed) {
+            questionRagFeignClient.deleteQuestion((Long) id);
+        }
+        return removed;
+    }
+
+    private void syncQuestionToRag(Question question) {
+        RagQuestionDocument document = new RagQuestionDocument();
+        document.setQuestionId(question.getId());
+        document.setAuthorId(question.getAuthorId());
+        document.setTitle(question.getTitle());
+        document.setContent(question.getContent());
+        document.setTags(question.getTags());
+        questionRagFeignClient.upsertQuestion(document);
     }
 
 
