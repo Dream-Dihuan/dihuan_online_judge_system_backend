@@ -1,19 +1,14 @@
 package com.dihuan.ai.service.impl;
 
 import com.dihuan.ai.config.AIContextGenerator;
-import com.dihuan.ai.model.AIContentItem;
 import com.dihuan.ai.model.ChatDto;
 import com.dihuan.ai.model.StreamResponse;
 import com.dihuan.ai.service.AIService;
-import com.dihuan.serviceClient.service.QuestionFeignClient;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.ollama.api.OllamaOptions;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
-
 
 @Service
 public class AIOllamaService implements AIService {
@@ -21,13 +16,10 @@ public class AIOllamaService implements AIService {
     private ChatClient chatClient;
     private final ChatClient.Builder chatClientBuilder;
 
-    @Autowired
-    private QuestionFeignClient questionFeignClient;
-
-
-    public AIOllamaService(ChatClient.Builder chatClient){
+    public AIOllamaService(ChatClient.Builder chatClient,
+                           RetrievalAugmentationAdvisor questionRagAdvisor){
         this.chatClientBuilder = chatClient;
-        this.chatClient=chatClient.build();
+        this.chatClient=chatClient.defaultAdvisors(questionRagAdvisor).build();
     }
 
     private void SetAIModel(String modelName){
@@ -40,12 +32,12 @@ public class AIOllamaService implements AIService {
     @Override
     public String chat( ChatDto chatDto){
 
-        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto,questionFeignClient);
+        var prompt = AIContextGenerator.GetPrompt(chatDto);
         System.out.println(chatDto);
         SetAIModel(chatDto.getModelName());
         String result;
         try{
-            result=chatClient.prompt().user(aiContextEntities.toString()).call().content();
+            result=chatClient.prompt(prompt).call().content();
         }catch(Exception e){
             return"Exception";
         }
@@ -60,15 +52,13 @@ public class AIOllamaService implements AIService {
      */
     @Override
     public Flux<StreamResponse> chatStream(ChatDto chatDto) {
-        List<AIContentItem> aiContextEntities = AIContextGenerator.GetFullContext(chatDto,questionFeignClient);
+        var prompt = AIContextGenerator.GetPrompt(chatDto);
         System.out.println(chatDto);
         SetAIModel(chatDto.getModelName());
 
         try {
-            return chatClient.prompt()
-                    .user(aiContextEntities.toString())
-                    .user("你好")
-                    .stream()
+            return chatClient.prompt(prompt)
+                .stream()
                     .content()
                     // 将每个字符串 chunk 包装成 StreamResponse 对象
                     .map(StreamResponse::new)

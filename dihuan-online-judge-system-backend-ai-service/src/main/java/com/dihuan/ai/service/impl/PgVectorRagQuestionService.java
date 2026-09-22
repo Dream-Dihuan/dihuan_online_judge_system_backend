@@ -43,6 +43,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
 
     @Override
     public void upsert(RagQuestionDocument document) {
+        // 题目服务只会为已发布题目调用 upsert；这里先删除旧版本，避免同一道题产生多条向量记录。
         VectorStore vectorStore = getVectorStore();
         delete(document.getQuestionId());
         vectorStore.add(List.of(new Document(documentId(document.getQuestionId()),
@@ -55,6 +56,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
 
     @Override
     public void delete(Long questionId) {
+        // 题目 ID 会转换为稳定 UUID，因此更新、下架和删除都能命中同一条向量记录。
         VectorStore vectorStore = vectorStoreProvider.getIfAvailable();
         if (vectorStore != null && questionId != null) {
             vectorStore.delete(List.of(documentId(questionId)));
@@ -63,6 +65,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
 
     @Override
     public List<Document> search(String query, int topK) {
+        // 两路检索各自多取一些候选结果，再统一融合后截取最终 topK。
         int candidateSize = Math.max(topK * 3, 20);
         List<Document> semanticDocuments = getVectorStore().similaritySearch(SearchRequest.builder()
                 .query(query)
@@ -82,6 +85,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
     }
 
     private String toEmbeddingText(RagQuestionDocument document) {
+        // 标题、标签和正文共同参与向量化；metadata 则用于保存结构化信息和后续展示/过滤。
         String tags = document.getTags() == null ? "" : String.join(", ", document.getTags());
         return "题目标题: " + document.getTitle() + "\n题目标签: " + tags + "\n题目内容: " + document.getContent();
     }
@@ -90,6 +94,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
         if (query == null || query.isBlank()) {
             return List.of();
         }
+        // PostgreSQL 全文检索负责精确术语命中，例如算法名称、题目标签和专有名词。
         return jdbcTemplate.query("""
                 SELECT id::text, content, metadata::text
                 FROM vector_store
@@ -123,6 +128,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
     }
 
     private double hybridScore(RankedDocument document) {
+        // 语义检索和关键词检索的原始分数不可直接相加，因此使用倒数排名归一化后再加权。
         double semanticScore = document.semanticRank == Integer.MAX_VALUE
                 ? 0 : 1.0 / document.semanticRank;
         double keywordScore = document.keywordRank == Integer.MAX_VALUE
@@ -133,12 +139,13 @@ public class PgVectorRagQuestionService implements RagQuestionService {
     private VectorStore getVectorStore() {
         VectorStore vectorStore = vectorStoreProvider.getIfAvailable();
         if (vectorStore == null) {
-            throw new IllegalStateException("No pgvector VectorStore configured; configure an EmbeddingModel first");
+            throw new IllegalStateException("未配置 pgvector VectorStore，请先配置 EmbeddingModel");
         }
         return vectorStore;
     }
 
     private String documentId(Long questionId) {
+        // nameUUIDFromBytes 对同一个题目 ID 总是生成同一个 UUID，适合作为向量文档主键。
         return UUID.nameUUIDFromBytes(("question:" + questionId).getBytes(StandardCharsets.UTF_8)).toString();
     }
 

@@ -1,4 +1,6 @@
 spring:
+  config:
+    import: optional:file:.env.local[.properties],optional:file:../.env.local[.properties]
   application:
     name: dihuan-ai-service
   datasource:
@@ -8,7 +10,7 @@ spring:
     password: ${RAG_DATABASE_PASSWORD:postgres}
   ai:
     openai:
-      # OpenAI-compatible remote API. The provider must support /embeddings.
+      # LLM 聊天模型配置。这里可以使用与 Embedding 不同的服务商。
       base-url: ${AI_API_BASE_URL:https://api.openai.com}
       api-key: ${AI_API_KEY}
       chat:
@@ -21,7 +23,7 @@ spring:
     vectorstore:
       pgvector:
         initialize-schema: true
-        dimensions: ${RAG_EMBEDDING_DIMENSION:1536}
+        dimensions: ${RAG_EMBEDDING_DIMENSION:1024}
         index-type: HNSW
         distance-type: COSINE_DISTANCE
   cloud:
@@ -37,9 +39,10 @@ spring:
         password: nacos
 rag:
   embedding:
+    # RAG 使用的 Embedding 模型配置，当前通过 DashScope 原生 SDK 调用。
     provider: dashscope
-    model: ${RAG_EMBEDDING_MODEL:qwen3.7-text-embedding}
-    dimension: ${RAG_EMBEDDING_DIMENSION:1536}
+    model: ${RAG_EMBEDDING_MODEL:qwen3.7-text-embedding-flash}
+    dimension: ${RAG_EMBEDDING_DIMENSION:1024}
   search:
     keyword-weight: ${RAG_KEYWORD_WEIGHT:0.3}
     semantic-weight: ${RAG_SEMANTIC_WEIGHT:0.7}

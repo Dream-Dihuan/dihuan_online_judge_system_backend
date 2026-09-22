@@ -17,6 +17,8 @@ import com.dihuan.question.service.QuestionService;
 import com.dihuan.serviceClient.service.QuestionRagFeignClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,6 +32,8 @@ import java.io.Serializable;
 @Service
 public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     implements QuestionService {
+
+    private static final Logger log = LoggerFactory.getLogger(QuestionServiceImpl.class);
 
     @Autowired
     private QuestionMapper questionMapper;
@@ -69,9 +73,9 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         BeanUtils.copyProperties(addOrUpdateQuestionInfoDto,question);
         this.saveOrUpdate(question);
 
-        // 将此题目设置为待审核状态
+        // 修改后的题目必须重新审核，同时删除旧向量，避免 AI 继续检索到旧版本内容。
         questionMapper.updateCheckStatus(question.getId(),0L);
-        questionRagFeignClient.deleteQuestion(question.getId());
+        deleteQuestionFromRag(question.getId());
     }
 
     @Override
@@ -108,9 +112,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         Question question = this.getById(id);
         if (question != null) {
             if (Long.valueOf(1L).equals(checkStatus)) {
+                // 只有审核通过的题目才允许进入 AI 知识库。
                 syncQuestionToRag(question);
             } else {
-                questionRagFeignClient.deleteQuestion(id);
+                // 待审核、审核不通过或下架时，都必须从 AI 知识库删除。
+                deleteQuestionFromRag(id);
             }
         }
     }
@@ -124,9 +130,11 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
         this.saveBatch(questionList);
         for (Question question : questionList) {
             if (Long.valueOf(1L).equals(checkStatus)) {
+                // 批量导入时如果已经是发布状态，直接建立对应的 RAG 文档。
                 syncQuestionToRag(question);
             } else {
-                questionRagFeignClient.deleteQuestion(question.getId());
+                // 非发布状态不进入 RAG，并清理可能存在的旧向量。
+                deleteQuestionFromRag(question.getId());
             }
         }
     }
@@ -135,19 +143,32 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     public boolean removeById(Serializable id) {
         boolean removed = super.removeById(id);
         if (removed) {
-            questionRagFeignClient.deleteQuestion((Long) id);
+            deleteQuestionFromRag((Long) id);
         }
         return removed;
     }
 
     private void syncQuestionToRag(Question question) {
+        // 题目服务只负责发送结构化题目文档，Embedding 和 pgvector 存储由 AI 服务完成。
         RagQuestionDocument document = new RagQuestionDocument();
         document.setQuestionId(question.getId());
         document.setAuthorId(question.getAuthorId());
         document.setTitle(question.getTitle());
         document.setContent(question.getContent());
         document.setTags(question.getTags());
-        questionRagFeignClient.upsertQuestion(document);
+        try {
+            questionRagFeignClient.upsertQuestion(document);
+        } catch (RuntimeException exception) {
+            log.warn("同步题目 {} 到 RAG 知识库失败，审核状态更新继续完成", question.getId(), exception);
+        }
+    }
+
+    private void deleteQuestionFromRag(Long questionId) {
+        try {
+            questionRagFeignClient.deleteQuestion(questionId);
+        } catch (RuntimeException exception) {
+            log.warn("删除题目 {} 的 RAG 向量失败，题目主数据操作继续完成", questionId, exception);
+        }
     }
 
 
