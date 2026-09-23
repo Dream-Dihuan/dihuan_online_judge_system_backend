@@ -1,11 +1,14 @@
 package com.dihuan.ai.service.impl;
 
 import com.dihuan.ai.config.AIContextGenerator;
+import com.dihuan.ai.config.OrderedChatMemoryAdvisor;
 import com.dihuan.ai.model.ChatDto;
 import com.dihuan.ai.model.StreamResponse;
 import com.dihuan.ai.service.AIService;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -15,17 +18,31 @@ public class AIOllamaService implements AIService {
 
     private ChatClient chatClient;
     private final ChatClient.Builder chatClientBuilder;
+    private final RetrievalAugmentationAdvisor questionRagAdvisor;
+    private final OrderedChatMemoryAdvisor chatMemoryAdvisor;
 
     public AIOllamaService(ChatClient.Builder chatClient,
-                           RetrievalAugmentationAdvisor questionRagAdvisor){
+                           RetrievalAugmentationAdvisor questionRagAdvisor,
+                           ChatMemory chatMemory){
         this.chatClientBuilder = chatClient;
-        this.chatClient=chatClient.defaultAdvisors(questionRagAdvisor).build();
+        this.questionRagAdvisor = questionRagAdvisor;
+        this.chatMemoryAdvisor = new OrderedChatMemoryAdvisor(chatMemory);
+        this.chatClient = buildChatClient();
     }
 
     private void SetAIModel(String modelName){
         OllamaOptions ollamaOptions = new OllamaOptions();
         ollamaOptions.setModel(modelName);
-        this.chatClient=chatClientBuilder.defaultOptions(ollamaOptions).build();
+        this.chatClient = chatClientBuilder
+                .defaultOptions(ollamaOptions)
+                .defaultAdvisors(questionRagAdvisor, chatMemoryAdvisor)
+                .build();
+    }
+
+    private ChatClient buildChatClient() {
+        return chatClientBuilder
+                .defaultAdvisors(questionRagAdvisor, chatMemoryAdvisor)
+                .build();
     }
 
 
@@ -37,7 +54,12 @@ public class AIOllamaService implements AIService {
         SetAIModel(chatDto.getModelName());
         String result;
         try{
-            result=chatClient.prompt(prompt).call().content();
+                result = chatClient.prompt(prompt)
+                    .advisors(advisor -> advisor.param(
+                        AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY,
+                        chatDto.getConversationId()))
+                    .call()
+                    .content();
         }catch(Exception e){
             return"Exception";
         }
@@ -58,6 +80,9 @@ public class AIOllamaService implements AIService {
 
         try {
             return chatClient.prompt(prompt)
+                .advisors(advisor -> advisor.param(
+                        AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY,
+                        chatDto.getConversationId()))
                 .stream()
                     .content()
                     // 将每个字符串 chunk 包装成 StreamResponse 对象

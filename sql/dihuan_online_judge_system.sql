@@ -112,3 +112,33 @@ CREATE TABLE `question_collections` (
     KEY `idx_user_id` (`user_id`),
     KEY `idx_question_id` (`question_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户题目收藏表';
+
+-- AI聊天会话表
+CREATE TABLE IF NOT EXISTS `ai_chat_conversation` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `conversation_id` VARCHAR(64) NOT NULL COMMENT '会话业务ID',
+    `user_id` BIGINT NOT NULL COMMENT '用户ID',
+    `title` VARCHAR(255) NOT NULL DEFAULT '新对话' COMMENT '会话标题',
+    `model_name` VARCHAR(100) DEFAULT NULL COMMENT '使用的模型名称',
+    `question_id` BIGINT DEFAULT NULL COMMENT '关联题目ID',
+    `last_message_at` DATETIME(6) DEFAULT NULL COMMENT '最后一条消息时间',
+    `create_time` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+    `update_time` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6)
+        ON UPDATE CURRENT_TIMESTAMP(6) COMMENT '更新时间',
+    `is_deleted` TINYINT NOT NULL DEFAULT 0 COMMENT '是否删除',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_conversation_id` (`conversation_id`),
+    KEY `idx_user_conversation` (`user_id`, `is_deleted`, `update_time`),
+    KEY `idx_question_id` (`question_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AI聊天会话表';
+
+-- AI聊天消息表
+CREATE TABLE IF NOT EXISTS `ai_chat_message` (
+    `id` BIGINT NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `conversation_id` VARCHAR(64) NOT NULL COMMENT '会话业务ID',
+    `message_type` VARCHAR(20) NOT NULL COMMENT '消息类型：SYSTEM、USER、ASSISTANT、TOOL',
+    `content` LONGTEXT NOT NULL COMMENT '消息内容',
+    `create_time` DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    KEY `idx_conversation_message` (`conversation_id`, `create_time`, `id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='AI聊天消息表';

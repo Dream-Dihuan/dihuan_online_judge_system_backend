@@ -3,11 +3,12 @@ spring:
     import: optional:file:.env.local[.properties],optional:file:../.env.local[.properties]
   application:
     name: dihuan-ai-service
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: ${RAG_DATABASE_URL:jdbc:postgresql://127.0.0.1:5432/dihuan_online_judge_system}
-    username: ${RAG_DATABASE_USERNAME:postgres}
-    password: ${RAG_DATABASE_PASSWORD:postgres}
+  chat-memory:
+    datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      jdbc-url: ${CHAT_MEMORY_DATABASE_URL:jdbc:mysql://127.0.0.1:3306/dihuan_online_judge_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai}
+      username: ${CHAT_MEMORY_DATABASE_USERNAME:root}
+      password: ${CHAT_MEMORY_DATABASE_PASSWORD:root}
   ai:
     openai:
       # LLM 聊天模型配置。这里可以使用与 Embedding 不同的服务商。
@@ -38,6 +39,11 @@ spring:
         username: nacos
         password: nacos
 rag:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${RAG_DATABASE_URL:jdbc:postgresql://127.0.0.1:5432/dihuan_online_judge_system}
+    username: ${RAG_DATABASE_USERNAME:postgres}
+    password: ${RAG_DATABASE_PASSWORD:postgres}
   embedding:
     # RAG 使用的 Embedding 模型配置，当前通过 DashScope 原生 SDK 调用。
     provider: dashscope
