@@ -9,6 +9,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.AbstractChatMemoryAdvisor;
 import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
+import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -34,6 +35,7 @@ public class AIThirdAPIService implements AIService {
     @Override
     public String chat(ChatDto chatDto) {
         return this.chatClient.prompt(AIContextGenerator.GetPrompt(chatDto))
+            .messages(new UserMessage(chatDto.getMessage()))
             .advisors(advisor -> advisor.param(
                 AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY,
                 chatDto.getConversationId()))
@@ -44,6 +46,7 @@ public class AIThirdAPIService implements AIService {
     @Override
     public Flux<StreamResponse> chatStream(ChatDto chatDto) {
         return this.chatClient.prompt(AIContextGenerator.GetPrompt(chatDto))
+            .messages(new UserMessage(chatDto.getMessage()))
             .advisors(advisor -> advisor.param(
                 AbstractChatMemoryAdvisor.CHAT_MEMORY_CONVERSATION_ID_KEY,
                 chatDto.getConversationId()))

@@ -1,16 +1,13 @@
 package com.dihuan.ai.service.impl;
 
 import com.dihuan.ai.service.RagQuestionService;
+import com.dihuan.ai.service.RagKeywordSearchService;
 import com.dihuan.model.dto.ai.RagQuestionDocument;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -24,8 +21,7 @@ import java.util.UUID;
 @Service
 public class PgVectorRagQuestionService implements RagQuestionService {
     private final ObjectProvider<VectorStore> vectorStoreProvider;
-    private final JdbcTemplate jdbcTemplate;
-    private final ObjectMapper objectMapper;
+    private final RagKeywordSearchService keywordSearchService;
 
     @Value("${rag.search.keyword-weight:0.3}")
     private double keywordWeight;
@@ -34,11 +30,9 @@ public class PgVectorRagQuestionService implements RagQuestionService {
     private double semanticWeight;
 
     public PgVectorRagQuestionService(ObjectProvider<VectorStore> vectorStoreProvider,
-                                      JdbcTemplate jdbcTemplate,
-                                      ObjectMapper objectMapper) {
+                                      RagKeywordSearchService keywordSearchService) {
         this.vectorStoreProvider = vectorStoreProvider;
-        this.jdbcTemplate = jdbcTemplate;
-        this.objectMapper = objectMapper;
+        this.keywordSearchService = keywordSearchService;
     }
 
     @Override
@@ -95,21 +89,7 @@ public class PgVectorRagQuestionService implements RagQuestionService {
             return List.of();
         }
         // PostgreSQL 全文检索负责精确术语命中，例如算法名称、题目标签和专有名词。
-        return jdbcTemplate.query("""
-                SELECT id::text, content, metadata::text
-                FROM vector_store
-                WHERE to_tsvector('simple', content) @@ plainto_tsquery('simple', ?)
-                ORDER BY ts_rank_cd(to_tsvector('simple', content), plainto_tsquery('simple', ?)) DESC
-                LIMIT ?
-                """, (resultSet, rowNumber) -> {
-            try {
-                Map<String, Object> metadata = objectMapper.readValue(
-                        resultSet.getString("metadata"), new TypeReference<>() { });
-                return new Document(resultSet.getString("id"), resultSet.getString("content"), metadata);
-            } catch (JsonProcessingException exception) {
-                throw new IllegalStateException("Failed to parse pgvector metadata", exception);
-            }
-        }, query, query, topK);
+        return keywordSearchService.search(query, topK);
     }
 
     private void addRankedDocuments(Map<String, RankedDocument> rankedDocuments,
