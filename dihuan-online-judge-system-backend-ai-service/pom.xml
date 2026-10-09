@@ -54,6 +54,13 @@
             <version>2.21.0</version>
         </dependency>
 
+        <!-- 与 Spring AI 1.0.0-M6 的 JSON Schema 模块保持一致 -->
+        <dependency>
+            <groupId>com.github.victools</groupId>
+            <artifactId>jsonschema-generator</artifactId>
+            <version>4.37.0</version>
+        </dependency>
+
         <!-- spring ai core -->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.ai</groupId>-->

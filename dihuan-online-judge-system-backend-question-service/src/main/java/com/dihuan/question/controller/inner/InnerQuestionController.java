@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dihuan.model.entity.Question;
 import com.dihuan.model.entity.QuestionSubmit;
 import com.dihuan.model.enums.question.QuestionResultEnum;
+import com.dihuan.common.result.DihuanPage;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
 import com.dihuan.question.mapper.QuestionMapper;
 import com.dihuan.question.mapper.QuestionSubmitMapper;
@@ -44,6 +46,12 @@ public class InnerQuestionController implements QuestionFeignClient {
     public QuestionSubmitVo getQuestionSubmitInfo(@RequestParam Long id) {
         QuestionSubmitVo questionSubmitInfoVo = questionSubmitService.getQuestionSubmitInfo(id);
         return questionSubmitInfoVo;
+    }
+
+    @Override
+    public DihuanPage<QuestionSubmitListItemVo> getQuestionSubmitList(Long userId, Long questionId,
+                                                                       Integer page, Integer pageSize) {
+        return questionSubmitService.getQuestionSubmitList(userId, null, questionId, null, null, page, pageSize);
     }
 
     @PostMapping("updateQuestionSubmit")

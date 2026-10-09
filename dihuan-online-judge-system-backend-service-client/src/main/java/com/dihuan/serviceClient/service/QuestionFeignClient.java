@@ -2,6 +2,8 @@ package com.dihuan.serviceClient.service;
 
 import com.dihuan.model.entity.Question;
 import com.dihuan.model.entity.QuestionSubmit;
+import com.dihuan.common.result.DihuanPage;
+import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.ibatis.annotations.Update;
@@ -18,6 +20,14 @@ public interface QuestionFeignClient {
     @GetMapping("getQuestionSubmitInfo")
     @Operation(summary = "获取题目提交信息")
     QuestionSubmitVo getQuestionSubmitInfo(@RequestParam("id") Long id);
+
+        @GetMapping("getQuestionSubmitList")
+        @Operation(summary = "获取题目提交记录列表")
+        DihuanPage<QuestionSubmitListItemVo> getQuestionSubmitList(
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "questionId", required = false) Long questionId,
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize);
 
     @PostMapping("updateQuestionSubmit")
     @Operation(summary = "更新题目提交信息")

@@ -33,6 +33,10 @@ public class DihuanPage<T> extends Page<T> {
         return super.getSize();
     }
 
+    public DihuanPage() {
+        super();
+    }
+
     public DihuanPage(long current, long size) {
         super(current, size, 0L);
     }

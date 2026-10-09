@@ -6,6 +6,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.sql.DataSource;
 
@@ -18,7 +19,7 @@ public class AIChatMybatisConfig {
     @Bean
     @Primary
     public SqlSessionFactory chatMemorySqlSessionFactory(
-            DataSource chatMemoryDataSource) throws Exception {
+            @Qualifier("chatMemoryDataSource") DataSource chatMemoryDataSource) throws Exception {
         MybatisSqlSessionFactoryBean factoryBean = new MybatisSqlSessionFactoryBean();
         factoryBean.setDataSource(chatMemoryDataSource);
         return factoryBean.getObject();
