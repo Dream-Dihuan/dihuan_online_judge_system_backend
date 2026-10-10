@@ -25,10 +25,10 @@ public class QuestionSubmissionTool {
 	}
 
 	@Tool(description = "查询当前登录用户针对指定题目的最近提交记录。当用户询问提交历史、最近提交或提交列表时使用")
-	public List<QuestionSubmitListItemVo> getRecentQuestionSubmissions(@ToolParam(description = "题目ID") Long questionId, @ToolParam(description = "获取条数") Integer limit) {
+	public String getRecentQuestionSubmissions(@ToolParam(description = "题目ID") Long questionId, @ToolParam(description = "获取条数") Integer limit) {
 		Long userId = currentUserId();
 		validateArguments(questionId, userId, limit);
-		return queryRecentQuestionSubmissions(questionId, userId, limit);
+		return formatAsMarkdown(questionId, queryRecentQuestionSubmissions(questionId, userId, limit));
 	}
 
 	@Tool(description = "查询当前登录用户的一条提交详情，包括代码、判题状态、判题结果和判题用例信息。当用户询问某个提交为什么出错时使用")
@@ -69,5 +69,53 @@ public class QuestionSubmissionTool {
 		if (limit == null || limit <= 0 || limit > MAX_LIMIT) {
 			throw new IllegalArgumentException("limit must be between 1 and " + MAX_LIMIT);
 		}
+	}
+
+	private String formatAsMarkdown(Long questionId, List<QuestionSubmitListItemVo> submissions) {
+		StringBuilder markdown = new StringBuilder("题目ID ")
+				.append(questionId)
+				.append(" 最近的提交记录：\n\n")
+				.append("| 提交ID | 语言 | 判题状态 | 结果 | 提交时间 |\n")
+				.append("| --- | --- | --- | --- | --- |\n");
+		if (submissions.isEmpty()) {
+			return markdown.append("| - | - | - | 暂无提交记录 | - |").toString();
+		}
+
+		for (QuestionSubmitListItemVo submission : submissions) {
+			markdown.append("| ")
+					.append(valueOrDash(submission.getQuestionSubmitId()))
+					.append(" | ")
+					.append(valueOrDash(submission.getLanguage()))
+					.append(" | ")
+					.append(judgeStatusText(submission.getJudgeStatus()))
+					.append(" | ")
+					.append(questionResultText(submission.getQuestionResult()))
+					.append(" | ")
+					.append(valueOrDash(submission.getCreateTime()))
+					.append(" |\n");
+		}
+		return markdown.toString();
+	}
+
+	private String judgeStatusText(Integer status) {
+		return switch (status == null ? -1 : status) {
+			case 0 -> "等待判题";
+			case 1 -> "判题中";
+			case 2 -> "判题完成";
+			default -> "未知状态";
+		};
+	}
+
+	private String questionResultText(Integer result) {
+		return switch (result == null ? -1 : result) {
+			case 0 -> "未尝试";
+			case 1 -> "通过";
+			case 2 -> "未通过";
+			default -> "未知结果";
+		};
+	}
+
+	private String valueOrDash(Object value) {
+		return value == null ? "-" : value.toString();
 	}
 }
