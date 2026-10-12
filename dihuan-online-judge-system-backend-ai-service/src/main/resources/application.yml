@@ -56,6 +56,11 @@ server:
   port: 8084
   servlet:
     context-path: /api/ai
+
+ai:
+  http:
+    connect-timeout-ms: ${AI_CONNECT_TIMEOUT_MS:10000}
+    read-timeout-ms: ${AI_READ_TIMEOUT_MS:180000}
 #springdoc:
 #  default-flat-param-object: true
 springdoc:

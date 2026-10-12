@@ -16,6 +16,9 @@ import org.springframework.web.servlet.HandlerInterceptor;
 public class ModelTokenInfoInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // 先清空，避免上一个请求残留的登录态被本请求误用（Tomcat 线程复用）
+        TokenInfoHolder.clearTokenInfo();
+
         // 获取并解析token
         String token = request.getHeader("dihuan_oj_system_token");
         if(token!=null){
@@ -29,6 +32,12 @@ public class ModelTokenInfoInterceptor implements HandlerInterceptor {
         }
 
         return true;
+    }
+
+    @Override
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
+        // 请求结束清理 ThreadLocal，防止线程复用导致串用户
+        TokenInfoHolder.clearTokenInfo();
     }
 
 }

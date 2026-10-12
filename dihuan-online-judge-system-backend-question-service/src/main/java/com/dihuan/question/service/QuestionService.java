@@ -29,4 +29,6 @@ public interface QuestionService extends IService<Question> {
     void updateCheckStatus(Long id, Long checkStatus);
 
     void importQuestionInfo(Long authorId,Long checkStatus, List<Question> questionList);
+
+    int syncPassedQuestionsToRag();
 }

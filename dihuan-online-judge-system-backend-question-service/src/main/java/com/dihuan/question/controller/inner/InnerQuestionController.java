@@ -92,5 +92,11 @@ public class InnerQuestionController implements QuestionFeignClient {
         questionMapper.incrementAcceptedCount(questionId);
     }
 
+    @PostMapping("/script/syncPassedQuestionsToRag")
+    @Operation(summary = "脚本：同步所有已通过题目到 RAG")
+    public Integer syncPassedQuestionsToRag() {
+        return questionService.syncPassedQuestionsToRag();
+    }
+
 
 }

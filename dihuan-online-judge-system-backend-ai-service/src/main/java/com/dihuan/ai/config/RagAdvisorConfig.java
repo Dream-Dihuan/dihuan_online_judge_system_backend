@@ -1,13 +1,16 @@
 package com.dihuan.ai.config;
 
 import com.dihuan.ai.service.RagQuestionService;
-import org.springframework.ai.chat.client.advisor.RetrievalAugmentationAdvisor;
+import org.springframework.ai.rag.advisor.RetrievalAugmentationAdvisor;
 import org.springframework.ai.rag.retrieval.search.DocumentRetriever;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Configuration
 public class RagAdvisorConfig {
+    private static final Logger log = LoggerFactory.getLogger(RagAdvisorConfig.class);
     /**
      * 创建题目知识库的 RAG Advisor。
      *
@@ -18,7 +21,13 @@ public class RagAdvisorConfig {
     @Bean
     public RetrievalAugmentationAdvisor questionRagAdvisor(RagQuestionService ragQuestionService) {
         // RagQuestionService 内部已经完成语义检索、关键词检索和 30%/70% 混合排序。
-        DocumentRetriever documentRetriever = query -> ragQuestionService.search(query.text(), 5);
+        DocumentRetriever documentRetriever = query -> {
+            log.info("[AI][RAG] retrieval start: query={}", query.text());
+            var documents = ragQuestionService.search(query.text(), 5);
+            log.info("[AI][RAG] retrieval complete: count={}, documentIds={}",
+                documents.size(), documents.stream().map(document -> document.getId()).toList());
+            return documents;
+        };
         return RetrievalAugmentationAdvisor.builder()
                 .documentRetriever(documentRetriever)
                 .build();
