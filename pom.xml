@@ -24,9 +24,9 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <spring-cloud-alibaba.version>2023.0.1.0</spring-cloud-alibaba.version>
-        <spring-cloud.version>2023.0.1</spring-cloud.version>
-        <spring-boot.version>3.2.4</spring-boot.version>
+        <spring-cloud-alibaba.version>2025.0.0.0</spring-cloud-alibaba.version>
+        <spring-cloud.version>2025.0.0</spring-cloud.version>
+        <spring-boot.version>3.5.15</spring-boot.version>
         <knife4j-openapi3-jakarta-spring-boot-starter.version>4.3.0</knife4j-openapi3-jakarta-spring-boot-starter.version>
         <mybatis-plus.version>3.5.7</mybatis-plus.version>
         <mybatis-spring.version>3.0.3</mybatis-spring.version>
@@ -35,7 +35,7 @@
         <jwt.version>0.11.2</jwt.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <jackson-databind.version>2.15.4</jackson-databind.version>
-        <spring-ai-ollama-spring-boot-starter.version>1.0.0-M6</spring-ai-ollama-spring-boot-starter.version>
+        <spring-ai.version>1.0.9</spring-ai.version>
         <minio.version>8.5.3</minio.version>
         <hutool-all.version>5.8.13</hutool-all.version>
         <okhttp.version>4.9.3</okhttp.version>
@@ -146,22 +146,28 @@
             <!-- ollama ai -->
             <dependency>
                 <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-ollama-spring-boot-starter</artifactId>
-                <version>${spring-ai-ollama-spring-boot-starter.version}</version>
+                <artifactId>spring-ai-starter-model-ollama</artifactId>
+                <version>${spring-ai.version}</version>
             </dependency>
 
             <!-- spring ai core -->
             <dependency>
                 <groupId>org.springframework.ai</groupId>
                 <artifactId>spring-ai-core</artifactId>
-                <version>${spring-ai-ollama-spring-boot-starter.version}</version>
+                <version>${spring-ai.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-rag</artifactId>
+                <version>${spring-ai.version}</version>
             </dependency>
 
 
             <dependency>
                 <groupId>org.springframework.ai</groupId>
-                <artifactId>spring-ai-openai-spring-boot-starter</artifactId>
-                <version>1.0.0-M6</version>
+                <artifactId>spring-ai-starter-model-openai</artifactId>
+                <version>${spring-ai.version}</version>
             </dependency>
 
 

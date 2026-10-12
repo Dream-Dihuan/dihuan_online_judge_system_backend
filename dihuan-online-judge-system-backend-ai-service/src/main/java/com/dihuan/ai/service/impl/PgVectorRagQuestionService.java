@@ -9,6 +9,8 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -17,9 +19,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class PgVectorRagQuestionService implements RagQuestionService {
+    private static final Logger log = LoggerFactory.getLogger(PgVectorRagQuestionService.class);
+    private static final Pattern QUESTION_ID_PATTERN = Pattern.compile("\\[questionId=(\\d+)]");
     private final ObjectProvider<VectorStore> vectorStoreProvider;
     private final RagKeywordSearchService keywordSearchService;
 
@@ -59,23 +65,31 @@ public class PgVectorRagQuestionService implements RagQuestionService {
 
     @Override
     public List<Document> search(String query, int topK) {
+        log.info("[AI][RAG] hybrid search: query={}, topK={}", query, topK);
+        Long questionId = extractQuestionId(query);
+        String retrievalQuery = QUESTION_ID_PATTERN.matcher(query == null ? "" : query)
+            .replaceAll("").trim();
         // 两路检索各自多取一些候选结果，再统一融合后截取最终 topK。
         int candidateSize = Math.max(topK * 3, 20);
         List<Document> semanticDocuments = getVectorStore().similaritySearch(SearchRequest.builder()
-                .query(query)
+            .query(retrievalQuery)
             .topK(candidateSize)
+            .filterExpression(questionId == null ? null : "questionId == " + questionId)
             .build());
-        List<Document> keywordDocuments = keywordSearch(query, candidateSize);
+        List<Document> keywordDocuments = keywordSearch(retrievalQuery, candidateSize, questionId);
 
         Map<String, RankedDocument> rankedDocuments = new LinkedHashMap<>();
         addRankedDocuments(rankedDocuments, semanticDocuments, true);
         addRankedDocuments(rankedDocuments, keywordDocuments, false);
 
-        return rankedDocuments.values().stream()
+        List<Document> result = rankedDocuments.values().stream()
             .sorted(Comparator.comparingDouble(this::hybridScore).reversed())
             .limit(topK)
             .map(RankedDocument::document)
             .toList();
+        log.info("[AI][RAG] hybrid search result: questionId={}, semanticCount={}, keywordCount={}, resultIds={}",
+            questionId, semanticDocuments.size(), keywordDocuments.size(), result.stream().map(Document::getId).toList());
+        return result;
     }
 
     private String toEmbeddingText(RagQuestionDocument document) {
@@ -84,12 +98,20 @@ public class PgVectorRagQuestionService implements RagQuestionService {
         return "题目标题: " + document.getTitle() + "\n题目标签: " + tags + "\n题目内容: " + document.getContent();
     }
 
-    private List<Document> keywordSearch(String query, int topK) {
+    private List<Document> keywordSearch(String query, int topK, Long questionId) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
         // PostgreSQL 全文检索负责精确术语命中，例如算法名称、题目标签和专有名词。
-        return keywordSearchService.search(query, topK);
+        return keywordSearchService.search(query, topK, questionId);
+    }
+
+    private Long extractQuestionId(String query) {
+        if (query == null) {
+            return null;
+        }
+        Matcher matcher = QUESTION_ID_PATTERN.matcher(query);
+        return matcher.find() ? Long.valueOf(matcher.group(1)) : null;
     }
 
     private void addRankedDocuments(Map<String, RankedDocument> rankedDocuments,

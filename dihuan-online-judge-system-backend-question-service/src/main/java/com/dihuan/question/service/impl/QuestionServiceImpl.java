@@ -140,6 +140,17 @@ public class QuestionServiceImpl extends ServiceImpl<QuestionMapper, Question>
     }
 
     @Override
+    public int syncPassedQuestionsToRag() {
+        LambdaQueryWrapper<Question> questionQueryWrapper = new LambdaQueryWrapper<>();
+        questionQueryWrapper.eq(Question::getCheckStatus, 1L);
+        List<Question> passedQuestions = questionMapper.selectList(questionQueryWrapper);
+        for (Question question : passedQuestions) {
+            syncQuestionToRag(question);
+        }
+        return passedQuestions.size();
+    }
+
+    @Override
     public boolean removeById(Serializable id) {
         boolean removed = super.removeById(id);
         if (removed) {

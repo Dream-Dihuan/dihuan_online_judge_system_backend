@@ -6,7 +6,19 @@ import reactor.core.publisher.Flux;
 
 public interface AIService {
 
-    String chat(ChatDto chatDto);
+    /**
+     * 执行一次对话。
+     *
+     * @param chatDto 对话参数
+     * @param userId  当前登录用户ID，用于工具调用时校验身份
+     */
+    String chat(ChatDto chatDto, Long userId);
 
-    Flux<StreamResponse> chatStream(ChatDto chatDto);
+    /**
+     * 流式对话。
+     *
+     * @param chatDto 对话参数
+     * @param userId  当前登录用户ID，用于工具调用时校验身份
+     */
+    Flux<StreamResponse> chatStream(ChatDto chatDto, Long userId);
 }

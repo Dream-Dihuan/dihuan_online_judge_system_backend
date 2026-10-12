@@ -6,9 +6,12 @@ import com.dihuan.common.utils.jsonWebTokenUtils.TokenInfo;
 import com.dihuan.model.vo.question.QuestionSubmitListItemVo;
 import com.dihuan.model.vo.question.QuestionSubmitVo;
 import com.dihuan.serviceClient.service.QuestionFeignClient;
+import org.springframework.ai.chat.model.ToolContext;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +19,15 @@ import java.util.List;
 @Component
 public class QuestionSubmissionTool {
 
+	private static final Logger log = LoggerFactory.getLogger(QuestionSubmissionTool.class);
+
 	private static final int MAX_LIMIT = 100;
+
+	/**
+	 * ToolContext 中存放当前登录用户ID的键名。
+	 * 由 AIThirdAPIService 在每次请求时写入。
+	 */
+	public static final String USER_ID_KEY = "userId";
 
 	private final QuestionFeignClient questionFeignClient;
 
@@ -25,30 +36,67 @@ public class QuestionSubmissionTool {
 	}
 
 	@Tool(description = "查询当前登录用户针对指定题目的最近提交记录。当用户询问提交历史、最近提交或提交列表时使用")
-	public String getRecentQuestionSubmissions(@ToolParam(description = "题目ID") Long questionId, @ToolParam(description = "获取条数") Integer limit) {
-		Long userId = currentUserId();
+	public String getRecentQuestionSubmissions(@ToolParam(description = "题目ID") Long questionId, @ToolParam(description = "获取条数") Integer limit, ToolContext toolContext) {
+		Long userId = currentUserId(toolContext);
+		log.info("[AI][TOOL] getRecentQuestionSubmissions start: userId={}, questionId={}, limit={}", userId, questionId, limit);
 		validateArguments(questionId, userId, limit);
-		return formatAsMarkdown(questionId, queryRecentQuestionSubmissions(questionId, userId, limit));
+		String result = formatAsMarkdown(questionId, queryRecentQuestionSubmissions(questionId, userId, limit));
+		log.info("[AI][TOOL] getRecentQuestionSubmissions complete: questionId={}, resultLength={}, result={}", questionId, result.length(), result);
+		return result;
 	}
 
 	@Tool(description = "查询当前登录用户的一条提交详情，包括代码、判题状态、判题结果和判题用例信息。当用户询问某个提交为什么出错时使用")
-	public QuestionSubmitVo getQuestionSubmissionDetail(@ToolParam(description = "提交记录ID") Long submissionId) {
+	public QuestionSubmitVo getQuestionSubmissionDetail(@ToolParam(description = "提交记录ID") Long submissionId, ToolContext toolContext) {
+		Long userId = currentUserId(toolContext);
+		log.info("[AI][TOOL] getQuestionSubmissionDetail start: submissionId={}, userId={}", submissionId, userId);
 		if (submissionId == null || submissionId <= 0) {
 			throw new IllegalArgumentException("submissionId must be a positive number");
 		}
 		QuestionSubmitVo submission = questionFeignClient.getQuestionSubmitInfo(submissionId);
-		if (submission == null || !currentUserId().equals(submission.getUserId())) {
+		if (submission == null || !userId.equals(submission.getUserId())) {
 			throw new IllegalArgumentException("提交记录不存在或无权访问");
 		}
+		log.info("[AI][TOOL] getQuestionSubmissionDetail complete: submissionId={}, found=true", submissionId);
 		return submission;
 	}
 
-	private Long currentUserId() {
-		TokenInfo tokenInfo = TokenInfoHolder.getTokenInfo();
-		if (tokenInfo == null || tokenInfo.getId() == null || tokenInfo.getId() <= 0) {
-			throw new IllegalStateException("当前请求未获取到登录用户信息");
+	/**
+	 * 解析当前登录用户ID。
+	 *
+	 * <p>优先从 Spring AI 的 {@link ToolContext} 获取：流式接口下工具回调运行在
+	 * {@code Schedulers.boundedElastic()} 线程，无法读取 Tomcat 请求线程的 ThreadLocal。
+	 * ThreadLocal 仅作为阻塞式调用的兜底。</p>
+	 */
+	private Long currentUserId(ToolContext toolContext) {
+		Long userId = userIdFromToolContext(toolContext);
+		if (userId != null) {
+			return userId;
 		}
-		return tokenInfo.getId();
+		TokenInfo tokenInfo = TokenInfoHolder.getTokenInfo();
+		if (tokenInfo != null && tokenInfo.getId() != null && tokenInfo.getId() > 0) {
+			return tokenInfo.getId();
+		}
+		throw new IllegalStateException("当前请求未获取到登录用户信息");
+	}
+
+	private Long userIdFromToolContext(ToolContext toolContext) {
+		if (toolContext == null || toolContext.getContext() == null) {
+			return null;
+		}
+		Object value = toolContext.getContext().get(USER_ID_KEY);
+		if (value instanceof Number number) {
+			long userId = number.longValue();
+			return userId > 0 ? userId : null;
+		}
+		if (value instanceof String text && !text.isBlank()) {
+			try {
+				long userId = Long.parseLong(text.trim());
+				return userId > 0 ? userId : null;
+			} catch (NumberFormatException exception) {
+				log.warn("[AI][TOOL] invalid userId in tool context: {}", text);
+			}
+		}
+		return null;
 	}
 
 	private List<QuestionSubmitListItemVo> queryRecentQuestionSubmissions(Long questionId, Long userId, Integer limit) {

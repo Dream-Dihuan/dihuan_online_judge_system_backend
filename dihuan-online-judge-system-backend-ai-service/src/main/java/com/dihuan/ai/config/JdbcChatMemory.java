@@ -20,8 +20,8 @@ public class JdbcChatMemory implements ChatMemory {
     }
 
     @Override
-    public List<Message> get(String conversationId, int lastN) {
-        return chatMemoryService.get(conversationId, lastN);
+    public List<Message> get(String conversationId) {
+        return chatMemoryService.get(conversationId, 4);
     }
 
     @Override

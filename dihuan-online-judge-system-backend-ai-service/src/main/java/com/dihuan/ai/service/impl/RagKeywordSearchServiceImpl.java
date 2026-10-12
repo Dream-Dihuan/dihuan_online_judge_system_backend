@@ -27,13 +27,23 @@ public class RagKeywordSearchServiceImpl implements RagKeywordSearchService {
 
     @Override
     public List<Document> search(String query, int topK) {
+        return search(query, topK, null);
+    }
+
+    @Override
+    public List<Document> search(String query, int topK, Long questionId) {
         if (query == null || query.isBlank()) {
             return List.of();
         }
+        String questionFilter = questionId == null ? "" : " AND metadata ->> 'questionId' = ? ";
+        Object[] parameters = questionId == null
+                ? new Object[] {query, query, topK}
+            : new Object[] {query, questionId.toString(), query, topK};
         return jdbcTemplate.query("""
                 SELECT id::text, content, metadata::text
                 FROM vector_store
                 WHERE to_tsvector('simple', content) @@ plainto_tsquery('simple', ?)
+                """ + questionFilter + """
                 ORDER BY ts_rank_cd(to_tsvector('simple', content), plainto_tsquery('simple', ?)) DESC
                 LIMIT ?
                 """, (resultSet, rowNumber) -> {
@@ -44,6 +54,6 @@ public class RagKeywordSearchServiceImpl implements RagKeywordSearchService {
             } catch (JsonProcessingException exception) {
                 throw new IllegalStateException("Failed to parse pgvector metadata", exception);
             }
-        }, query, query, topK);
+        }, parameters);
     }
 }
